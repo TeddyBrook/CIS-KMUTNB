@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Prompt&display=swap');
+
+* {
+    font-size: 14px;
+    font-family: 'Prompt', sans-serif;
+}
+
+.page-container {
+    padding: 10px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.menu-container {
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #7d0f3f;
+}
+
+.menu-name {
+    color: white;
+    text-align: center;
+    margin: 5px;
+}
+
+.btn-menu-select {
+    width: auto;
+    height: auto;
+    border: none;
+    outline: none;
+    color: #7d0f3f;
+    display: inline-block;
+    background-color: #ffffff;
+    padding: 5px 15px;
+    border-radius: 10px;
+}
+
+.btn-menu-select option {
+    color: #7d0f3f;
+    background-color: #ffffff;
+}
+
+.from-container-user {
+    width: auto;
+    display: block;
+    padding: 1rem;
+    margin-left: 330px;
+    border-radius: 20px;
+    background-color: #7d0f3f;
+}
+
+.title-name {
+    font-size: 16px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.descriptions {
+    display: flex;
+}
+
+.from-name {
+    padding-left: 5px;
+}
+
+.input-form {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    outline: none;
+    display: block;
+    text-align: left;
+    border: 1px solid #ccc;
+}
+
+.form-description {
+    width: 500px;
+    padding: 2rem;
+    border-radius: 20px;
+    display: block;
+    color: #7d0f3f;
+    background-color: #ffffff;
+}
+
+.save {
+    margin-top: 10px;
+    padding: 10px 21px;
+    border-radius: 10px;
+    color: white;
+    display: inline-block;
+    text-decoration: none;
+    border: 1px solid #6e103b;
+    background-color: #7d0f3f;
+    text-shadow: 0px 1px 0px #730b3a;
+}
+
+.save:active {
+    box-shadow: 0 3px #ccc;
+    transform: translateY(4px);
+}
+
+button[type="button"]:hover {
+    background-color: #804760;
+}

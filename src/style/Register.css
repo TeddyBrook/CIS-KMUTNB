@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Prompt&display=swap');
+
+* {
+    font-size: 14px;
+    font-family: 'Prompt', sans-serif;
+}
+
+.input-container {
+    gap: 8px;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-register {
+    display: block;
+    outline: none;
+    width: 100%;
+    height: 40px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.position-head {
+    display: flex;
+    margin: 10px;
+}
+
+.position-contain {
+    display: flex;
+    align-items: center;
+    margin-right: 4px;
+}
+
+.position-form {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    accent-color: #7d0f3f;
+    background-color: #ffffff;
+}
+
+.position-name {
+    font-weight: 500;
+    margin-left: 8px;
+    color: #111827;
+}
+
+.button-container {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+}
+
+.login-link {
+    width: 100%;
+    text-align: center;
+    color: blue;
+    margin-top: 20px;
+}
+
+.bar-regis {
+    height: auto;
+    position: relative;
+    background-color: #e5e7eb;
+    background-size: cover;
+    background-position: 0% 50%;
+}
+
+.name-regis {
+    gap: 20px;
+    height: 110vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.form-regis {
+    z-index: 20;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    padding-left: 5rem;
+    padding-right: 5rem;
+    border-radius: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.title-regis {
+    font-size: 16px;
+    text-align: center;
+}
+
+input[type="submit"] {
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 10px;
+    padding: 10px 30px;
+    border-radius: 20px;
+    color: white;
+    background-color: #7d0f3f;
+}
+
+input[type="submit"]:hover {
+    background-color: #804760;
+}

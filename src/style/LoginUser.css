@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Prompt&display=swap');
+
+* {
+    font-size: 14px;
+    font-family: 'Prompt', sans-serif;
+}
+
+.input-container-user {
+    gap: 8px;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-user {
+    display: block;
+    outline: none;
+    width: 100%;
+    height: 40px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.button-container-user {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+}
+
+.regis-link {
+    width: 100%;
+    text-align: center;
+    color: blue;
+    margin-top: 20px;
+}
+
+.bar-login-user {
+    height: auto;
+    position: relative;
+    background-color: #e5e7eb;
+    background-size: cover;
+    background-position: 0% 50%;
+}
+
+.name-login-user {
+    gap: 20px;
+    height: 73vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px 30px 5px 30px;
+}
+
+.form-login-user {
+    z-index: 20;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    padding-left: 4rem;
+    padding-right: 4rem;
+    border-radius: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.title-login-user {
+    font-size: 16px;
+    text-align: center;
+}
+
+.type-user {
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+    padding: 10px 21px;
+    border-radius: 22px;
+    color: white;
+    border: 1px solid #7d0f3f;
+    background-color: #7d0f3f;
+    text-shadow: 0px 1px 0px #730b3a;
+}
+
+.type-user a {
+    color: white;
+    text-decoration: none;
+}
+
+.type-user:hover {
+    background-color: #804760;
+}
+
+.type-user:active {
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+
+input[type="password"] {
+    height: 45px;
+}
+
+input[type="submit"] {
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    padding: 10px 30px;
+    border-radius: 20px;
+    color: white;
+    background-color: #7d0f3f;
+}
+
+input[type="submit"]:hover {
+    background-color: #804760;
+}
+
+input[type="submit"]:active {
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}

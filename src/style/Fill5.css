@@ -1,0 +1,825 @@
+@import url('https://fonts.googleapis.com/css2?family=Prompt&display=swap');
+
+* {
+    font-size: 14px;
+    font-family: 'Prompt', sans-serif;
+}
+
+.fill5-container {
+    width: 100%;
+    height: auto;
+    display: grid;
+    place-content: center;
+    background-color: #7D0f3f;
+}
+
+.fill5-bar {
+    width: 1100px;
+    margin: 50px;
+    border-radius: 10px;
+    height: auto;
+    background-color: #ffffff;
+}
+
+.fill5-obe {
+    padding-top: 30px;
+    padding-left: 30px;
+    align-items: center;
+}
+
+.name-obe5 {
+    padding: 10px 21px;
+    border-radius: 22px;
+    color: white;
+    display: inline-block;
+    text-decoration: none;
+    border: 1px solid #6e103b;
+    background-color: #7d0f3f;
+    text-shadow: 0px 1px 0px #730b3a;
+}
+
+.name-head-obe5 {
+    text-align: center;
+}
+
+/* input-container-obe5 */
+
+.from-title-obe5 {
+    padding-top: 2%;
+    padding-left: 50px;
+    padding-right: 30px;
+}
+
+.from-college-obe5 {
+    width: 350px;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    text-align: center;
+    background-color: #ecf0f1;
+}
+
+.from-input-obe5 {
+    padding: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 10px;
+    outline: none;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+.from-inputs-obe5 {
+    width: 250px;
+    padding: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 10px;
+    outline: none;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+/* หมวดที่ 1 ข้อมูลทั่วไป */
+
+.mode1 p {
+    padding-top: 3%;
+    padding-bottom: 2%;
+    margin-bottom: -3%;
+    text-align: center;
+}
+
+.description {
+    display: block;
+    padding-top: 1%;
+}
+
+.from-mode {
+    display: block;
+    padding-left: 50px;
+}
+
+.from-course-obe5 {
+    width: 50%;
+    padding: 5px 5px 5px 15px;
+    margin-top: 1%;
+    margin-left: 50px;
+    margin-right: 20px;
+    border-radius: 10px;
+    outline: none;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+.from-credit-obe5 {
+    width: 10%;
+    margin-top: 1%;
+    margin-left: 50px;
+    border-radius: 10px;
+    outline: none;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+.form-name-obe5 {
+    margin-top: 1%;
+    margin-left: 50px;
+}
+
+.from-obe5 {
+    width: 60%;
+    padding: 5px;
+    margin-top: 1%;
+    margin-left: 10px;
+    border-radius: 10px;
+    outline: none;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+.from0-obe5 {
+    width: 40%;
+    padding: 5px;
+    margin-top: 1%;
+    margin-left: 50px;
+    border-radius: 10px;
+    outline: none;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+.form-name1-obe5 {
+    margin-top: 1%;
+    margin-left: 50px;
+}
+
+.from1-obe5 {
+    width: 40%;
+    padding: 5px 5px 5px 15px;
+    margin-top: 1%;
+    margin-left: 30px;
+    border-radius: 10px;
+    outline: none;
+    text-align: left;
+    border: 1px solid #ccc;
+}
+
+.form-name2-obe5 {
+    margin-top: 1%;
+    margin-left: 50px;
+}
+
+.from2-obe5 {
+    width: 40%;
+    padding: 5px 5px 5px 15px;
+    margin-top: 1%;
+    margin-left: 50px;
+    border-radius: 10px;
+    outline: none;
+    display: inline;
+    text-align: left;
+    border: 1px solid #ccc;
+}
+
+.teacher-5-add {
+    width: 25px;
+    height: 25px;
+    margin-left: 20px;
+    border-radius: 9999px;
+    border: none;
+    color: white;
+    text-align: center;
+    background-color: #7D0f3f;
+}
+
+.teacher-5-delete {
+    width: 25px;
+    height: 25px;
+    margin-left: 20px;
+    border-radius: 9999px;
+    border: none;
+    color: white;
+    text-align: center;
+    align-items: center;
+    background-color: #7D0f3f;
+}
+
+.form-name3-obe5 {
+    margin-top: 1%;
+    margin-left: 50px;
+}
+
+.from-semester-obe5 {
+    width: 10%;
+    padding: 5px;
+    margin-top: 1%;
+    margin-left: 20px;
+    margin-right: 5px;
+    border-radius: 10px;
+    outline: none;
+    display: inline;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+.from-year-obe5 {
+    padding: 5px;
+    margin-left: 20px;
+    margin-right: 5px;
+    border-radius: 10px;
+    outline: none;
+    display: inline;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+.from4-obe5 {
+    width: 40%;
+    padding: 5px 5px 5px 15px;
+    margin-top: 1%;
+    margin-left: 50px;
+    border-radius: 10px;
+    outline: none;
+    display: inline;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+.from5-obe5 {
+    width: 50%;
+    padding: 5px;
+    margin-top: 1%;
+    margin-left: 20px;
+    border-radius: 10px;
+    outline: none;
+    display: inline;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+.from-check-obe5 {
+    width: 15px;
+    height: 15px;
+    margin-top: 0.5%;
+    margin-left: 50px;
+    margin-right: 10px;
+    border-radius: 4px;
+    display: inline;
+    accent-color: #7d0f3f;
+    background-color: #ffffff;
+}
+
+/* หมวดที่ 2 การจัดการเรียนการสอนที่เปรียบเทียบกับแผนการสอน */
+
+.mode2 p {
+    padding-top: 3%;
+    padding-bottom: 2%;
+    margin-bottom: -3%;
+    text-align: center;
+}
+
+.from-modes {
+    margin-top: 1%;
+    margin-left: 50px;
+    display: inline;
+}
+
+.table-support {
+    margin-top: 1%;
+    margin-left: 50px;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+.table-support th {
+    text-align: center;
+    border: 1px solid #000000;
+}
+
+.table-support td {
+    padding: 3px;
+    text-align: left;
+    border: 1px solid #000000;
+}
+
+.from-table-support1 {
+    width: 240px;
+    border-radius: 10px;
+    outline: none;
+    border: none;
+    text-align: left;
+}
+
+.from-table-support2 {
+    width: 150px;
+    height: 80px;
+    border-radius: 10px;
+    border: none;
+    resize: none;
+    outline: none;
+    text-align: left;
+}
+
+.support-add {
+    width: 25px;
+    height: 25px;
+    margin-top: 1%;
+    margin-left: 20px;
+    border-radius: 9999px;
+    border: none;
+    color: white;
+    text-align: center;
+    background-color: #7D0f3f;
+}
+
+.support-delete {
+    width: 25px;
+    height: 25px;
+    margin-top: 30px;
+    margin-left: 20px;
+    border-radius: 9999px;
+    border: none;
+    color: white;
+    text-align: center;
+    background-color: #7D0f3f;
+}
+
+.from-clo-obe5 {
+    width: 15%;
+    padding: 5px;
+    margin-top: 1%;
+    margin-left: 50px;
+    border-radius: 10px;
+    outline: none;
+    display: inline;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+.from-clo-name-obe5 {
+    width: 50%;
+    padding: 5px 5px 5px 15px;
+    margin-top: 1%;
+    margin-left: 10px;
+    border-radius: 10px;
+    outline: none;
+    display: inline;
+    text-align: left;
+    border: 1px solid #ccc;
+}
+
+.clo-5-add {
+    width: 25px;
+    height: 25px;
+    margin-left: 20px;
+    border-radius: 9999px;
+    border: none;
+    color: white;
+    text-align: center;
+    background-color: #7D0f3f;
+}
+
+.clo-5-delete {
+    width: 25px;
+    height: 25px;
+    margin-left: 20px;
+    border-radius: 9999px;
+    border: none;
+    color: white;
+    text-align: center;
+    background-color: #7D0f3f;
+}
+
+.from-mode-obe5 {
+    margin-top: 1%;
+    margin-left: 50px;
+    display: block;
+}
+
+.table-effective {
+    margin-top: 1%;
+    margin-left: 50px;
+    margin-right: 50px;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+.table-effective th {
+    width: 100px;
+    padding: 5px;
+    text-align: center;
+    white-space: pre-wrap;
+    border: 1px solid #000000;
+}
+
+.table-effective td {
+    width: 100px;
+    padding: 5px;
+    text-align: center;
+    white-space: pre-wrap;
+    border: 1px solid rgb(0, 0, 0);
+}
+
+.from-table-effective {
+    width: 70px;
+    padding-left: 10px;
+    border: none;
+    outline: none;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    accent-color: #7d0f3f;
+    background-color: #ffffff;
+}
+
+.from-check-effective {
+    width: 70px;
+    padding-left: 10px;
+    border: none;
+    outline: none;
+    accent-color: #7d0f3f;
+    background-color: #ffffff;
+}
+
+.from-table1-effective {
+    width: 100px;
+    height: 70px;
+    border: none;
+    resize: none;
+    outline: none;
+    text-align: left;
+}
+
+.from-select-effective {
+    border: none;
+    outline: none;
+    text-align: center;
+}
+
+.from-option-effective {
+    width: 10px;
+    text-align: center;
+}
+
+/* หมวดที่ 3 ระบบการวัดและการประเมินผลการเรียนรู้ */
+
+.mode3 p {
+    padding-top: 3%;
+    padding-bottom: 2%;
+    margin-bottom: -3%;
+    text-align: center;
+}
+
+.from-assign-obe5 {
+    width: 15px;
+    height: 15px;
+    margin-top: 1%;
+    margin-left: 50px;
+    display: inline;
+    accent-color: #7d0f3f;
+    background-color: #ffffff;
+}
+
+.table-formative {
+    margin-top: 1%;
+    margin-left: 50px;
+    margin-right: 50px;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+.table-formative th {
+    padding: 5px;
+    border: 1px solid #000000;
+    text-align: center;
+}
+
+.table-formative td {
+    padding: 5px;
+    margin-left: 8px;
+    margin-right: 8px;
+    border: 1px solid #000000;
+    text-align: left;
+}
+
+.from-fmt {
+    display: flex;
+    flex-direction: column;
+}
+
+.from-formative {
+    width: 270px;
+    margin-left: 5px;
+    margin-right: 10px;
+    padding: 3px;
+    border: none;
+    outline: none;
+    text-align: left;
+}
+
+.from-choice {
+    width: 60px;
+    border: none;
+    outline: none;
+    accent-color: #7d0f3f;
+    background-color: #ffffff;
+}
+
+.from-guideline {
+    border: none;
+    outline: none;
+    text-align: center;
+}
+
+.label-name {
+    margin-top: 1%;
+    margin-left: 50px;
+}
+
+.table-summative {
+    margin-top: 1%;
+    margin-left: 50px;
+    margin-right: 50px;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+.table-summative th {
+    padding: 5px;
+    text-align: center;
+    border: 1px solid #000000;
+}
+
+.table-summative td {
+    padding: 5px;
+    margin-left: 8px;
+    margin-right: 8px;
+    text-align: left;
+    border: 1px solid #000000;
+}
+
+.table-summative tbody tr:nth-child(2) td:first-child,
+.table-summative tbody tr:nth-child(3) td:first-child,
+.table-summative tbody tr:nth-child(4) td:first-child,
+.table-summative tbody tr:nth-child(5) td:first-child {
+    text-indent: 20px;
+}
+
+.from-smt {
+    display: flex;
+    flex-direction: row;
+}
+
+.from-summative {
+    width: 340px;
+    margin-left: 5px;
+    margin-right: 10px;
+    border: none;
+    outline: none;
+    text-align: left;
+}
+
+.from-standard {
+    margin-left: 20px;
+    margin-right: 10px;
+    accent-color: #7d0f3f;
+    background-color: #ffffff;
+}
+
+.from-summative-other {
+    width: 100px;
+    margin-left: 5px;
+    margin-right: 10px;
+    border: none;
+    outline: none;
+    text-align: left;
+}
+
+/* หมวดที่ 4 สรุปผลการจัดการเรียนการสอนของรายวิชา */
+
+.mode4 p {
+    padding-top: 3%;
+    padding-bottom: 2%;
+    margin-bottom: -3%;
+    text-align: center;
+}
+
+.button-choose {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 60px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    color: white;
+    border: none;
+    text-align: center;
+    display: inline-block;
+    background-color: #7D0f3f;
+}
+
+.button-choose:active {
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+
+.show-file {
+    max-width: 200%;
+    max-height: 400px;
+    margin-left: 60px;
+}
+
+.from-file {
+    display: none;
+}
+
+.file-delete {
+    margin-top: 5px;
+    margin-left: 60px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: none;
+    color: white;
+    background-color: #f44336;
+}
+
+.file-delete:active {
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+
+.table-discrepancy {
+    margin-top: 1%;
+    margin-left: 50px;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+.table-discrepancy th {
+    height: 30px;
+    margin: 0 auto;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 1px solid #000000;
+}
+
+.table-discrepancy td {
+    margin: 0 auto;
+    border: 1px solid #000000;
+}
+
+.table-discrepancy .none {
+    border: none;
+}
+
+.from-table-discrepancy {
+    width: 180px;
+    border: none;
+    outline: none;
+    text-align: center;
+}
+
+.from-table1-discrepancy {
+    width: 100px;
+    border: none;
+    outline: none;
+    text-align: center;
+}
+
+.discrepancy-5-add {
+    width: 25px;
+    height: 25px;
+    margin-left: 5px;
+    border-radius: 9999px;
+    border: none;
+    color: white;
+    text-align: center;
+    background-color: #7D0f3f;
+}
+
+.discrepancy-5-delete {
+    width: 25px;
+    height: 25px;
+    margin-left: 20px;
+    border-radius: 9999px;
+    border: none;
+    color: white;
+    text-align: center;
+    background-color: #7D0f3f;
+}
+
+.other-obe5 {
+    color: red;
+    display: inline;
+}
+
+.from-other-obe5 {
+    width: 30%;
+    margin-left: 10px;
+    border-radius: 10px;
+    outline: none;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+/* หมวดที่ 5 ปัญหาและผลกระทบต่อการดำเนินการ */
+
+.mode5 p {
+    padding-top: 3%;
+    padding-bottom: 2%;
+    margin-bottom: -3%;
+    text-align: center;
+}
+
+/* หมวดที่ 6 การประเมินรายวิชา */
+
+.mode6 p {
+    padding-top: 3%;
+    padding-bottom: 2%;
+    margin-bottom: -3%;
+    text-align: center;
+}
+
+.from-obe5-small-name {
+    margin-top: 1%;
+    margin-left: 70px;
+    display: block;
+}
+
+.from-obe5-small {
+    width: 40%;
+    padding: 5px 5px 5px 15px;
+    margin-top: 1%;
+    margin-left: 70px;
+    border-radius: 10px;
+    outline: none;
+    display: inline;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+/* หมวดที่ 7 แผนการปรับปรุง */
+
+.mode7 p {
+    padding-top: 3%;
+    padding-bottom: 2%;
+    margin-bottom: -3%;
+    text-align: center;
+}
+
+/* Button Fill Out Document OBE 5 */
+
+.button-container {
+    align-items: center;
+    justify-content: center;
+}
+
+.button-save-obe5 {
+    margin-top: 2%;
+    margin-bottom: 2%;
+    padding: 10px 21px;
+    border-radius: 10px;
+    color: white;
+    display: inline;
+    text-decoration: none;
+    border: 1px solid #6e103b;
+    background-color: #7d0f3f;
+    text-shadow: 0px 1px 0px #730b3a;
+}
+
+.button-save-obe5:active {
+    box-shadow: 0 3px #ccc;
+    transform: translateY(4px);
+}
+
+.button-download-obe5 {
+    margin-top: 2%;
+    margin-bottom: 2%;
+    margin-left: 2%;
+    padding: 10px 21px;
+    border-radius: 10px;
+    color: white;
+    display: inline;
+    text-decoration: none;
+    border: 1px solid #6e103b;
+    background-color: #7d0f3f;
+    text-shadow: 0px 1px 0px #730b3a;
+}
+
+.button-download-obe5:active {
+    box-shadow: 0 3px #ccc;
+    transform: translateY(4px);
+}
+
+.button-download {
+    margin-bottom: 2%;
+    margin-left: 2%;
+    padding: 10px 21px;
+    border-radius: 10px;
+    color: white;
+    display: inline;
+    text-decoration: none;
+    border: 1px solid #6e103b;
+    background-color: #7d0f3f;
+    text-shadow: 0px 1px 0px #730b3a;
+}

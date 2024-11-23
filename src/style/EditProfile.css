@@ -16,6 +16,7 @@
     padding: 10px;
     border-radius: 10px;
     background-color: #7d0f3f;
+
 }
 
 .menu-name {
@@ -24,36 +25,60 @@
     margin: 5px;
 }
 
-.btn-menu-select {
-    width: auto;
-    height: auto;
+.btn-menu {
+    background-color: transparent;
+    color: #ffffff;
     border: none;
-    outline: none;
-    color: #7d0f3f;
-    display: inline-block;
-    background-color: #ffffff;
-    padding: 5px 15px;
+    padding: 10px 15px;
+    margin: 0px 0;
     border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.3s, color 0.3s, transform 0.2s;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.btn-menu-select option {
-    color: #7d0f3f;
+.btn-menu.active {
     background-color: #ffffff;
+    color: #7d0f3f;
+}
+
+.btn-menu:hover {
+    background-color: #ffffff;
+    color: #7d0f3f;
+    transform: translateY(-2px);
+}
+
+.btn-menu:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(125, 13, 51, 0.5);
 }
 
 .from-container-user {
     width: auto;
     display: block;
     padding: 1rem;
-    margin-left: 330px;
+    margin-left: 19.5%;
     border-radius: 20px;
     background-color: #7d0f3f;
+}
+
+.form-description {
+    width: 500px;
+    padding: 2rem;
+    border-radius: 20px;
+    display: block;
+    color: #7d0f3f;
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .title-name {
     font-size: 16px;
     margin-bottom: 20px;
     text-align: center;
+    font-weight: bold;
 }
 
 .descriptions {
@@ -65,9 +90,9 @@
 }
 
 .input-form {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
+    width: calc(100% - 20px);
+    padding: 0.75rem;
+    margin-bottom: 1rem;
     border-radius: 10px;
     outline: none;
     display: block;
@@ -75,32 +100,127 @@
     border: 1px solid #ccc;
 }
 
-.form-description {
-    width: 500px;
-    padding: 2rem;
-    border-radius: 20px;
-    display: block;
-    color: #7d0f3f;
-    background-color: #ffffff;
-}
-
-.save {
+.course-table {
+    width: 100%;
+    border-collapse: collapse;
     margin-top: 10px;
-    padding: 10px 21px;
+}
+
+.course-table th,
+.course-table td {
+    padding: 20px;
+    text-align: left;
+    border: 1px solid #730b3a;
+
+}
+
+.course-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.course-table th {
+    background-color: #f2f2f2;
+}
+
+.course-table td[colSpan="3"] {
+    text-align: center;
+    font-style: italic;
+    background-color: #ffffff;
+    padding: 20px 182px;
+    border: 1px solid #000;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+}
+
+.container-role {
+    display: inline;
+    align-items: center;
+}
+
+.select-role {
+    padding: 10px;
+}
+
+.select-form {
+    margin: 5px 0px 5px 0px;
+    width: 35%;
+    padding: 5px;
+    border: 1px solid #ccc;
     border-radius: 10px;
+    background-color: #fff;
+    color: #730b3a;
+}
+
+.select-form:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.select-form:disabled {
+    background-color: #f5f5f5;
+    color: #aaa;
+}
+
+/* Button Save */
+.save-edit {
+    background-color: #4CAF50;
     color: white;
-    display: inline-block;
-    text-decoration: none;
-    border: 1px solid #6e103b;
-    background-color: #7d0f3f;
-    text-shadow: 0px 1px 0px #730b3a;
+    border: 2px solid transparent;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.3s, transform 0.3s, border-color 0.3s;
 }
 
-.save:active {
-    box-shadow: 0 3px #ccc;
-    transform: translateY(4px);
+.save-edit:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+    border-color: #388e3c;
 }
 
-button[type="button"]:hover {
-    background-color: #804760;
+/* Button Cancel */
+.cancel-edit {
+    background-color: #f44336;
+    color: white;
+    border: 2px solid transparent;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.3s, transform 0.3s, border-color 0.3s;
+}
+
+.cancel:hover {
+    background-color: #e53935;
+    transform: scale(1.05);
+    border-color: #c62828;
+}
+
+/* Button Edit */
+.click-edit {
+    background-color: #008CBA;
+    color: white;
+    border: 2px solid transparent;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.3s, transform 0.3s, border-color 0.3s;
+}
+
+.click-edit:hover {
+    background-color: #007bb5;
+    transform: scale(1.05);
+    border-color: #005f73;
 }

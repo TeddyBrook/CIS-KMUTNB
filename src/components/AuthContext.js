@@ -6,13 +6,13 @@ export const AuthProvider = ({ children }) => {
 
     const [user, setAuth] = useState(null);
 
-    const login = (user, token) => {
-        setAuth({ user_Name: user.user_Name, token });
+    const login = (user, token) => {    
+        setAuth({ user_Name: user.user_Name, token});
     }
 
     const logout = () => {
         setAuth(null);
-    }
+    } 
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');

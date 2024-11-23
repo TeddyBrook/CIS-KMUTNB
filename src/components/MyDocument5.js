@@ -68,6 +68,9 @@ const styles = StyleSheet.create({
     description4: {
         flexDirection: 'row', textAlign: 'left', color: 'red', marginLeft: 105, paddingRight: 30,
     },
+    description5: {
+        textAlign: 'left', marginBottom: 2, marginLeft: 135, paddingRight: 30,
+    },
     box: {
         flexDirection: 'row', alignItems: 'center', marginBottom: 3, marginLeft: 5,
     },
@@ -144,7 +147,7 @@ const styles = StyleSheet.create({
         width: 150, backgroundColor: '#fff', textAlign: 'left', borderBottomWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, paddingTop: 2, paddingLeft: 2,
     },
     cell1: {
-        width: 82, height: 'auto', backgroundColor: '#fff', borderBottomWidth: 1, borderRightWidth: 1,
+        width: 82, height: 'auto', backgroundColor: '#fff', borderBottomWidth: 1, borderRightWidth: 1, padding: 3,
     },
     cell2: {
         width: 60, height: 'auto', backgroundColor: '#fff', textAlign: 'center', borderBottomWidth: 1, borderLeftWidth: 1, borderRightWidth: 1,
@@ -153,7 +156,7 @@ const styles = StyleSheet.create({
         width: 60, height: 'auto', backgroundColor: '#fff', borderBottomWidth: 1, borderRightWidth: 1,
     },
     cell4: {
-        width: 100, height: 'auto', backgroundColor: '#fff', borderBottomWidth: 1, borderRightWidth: 1, whiteSpace: 'pre-wrap', overflow: 'hidden', wordBreak: 'break-all',
+        width: 100, height: 'auto', backgroundColor: '#fff', textAlign: 'left', borderBottomWidth: 1, borderRightWidth: 1, whiteSpace: 'pre-wrap', overflow: 'hidden', wordBreak: 'break-all', paddingLeft: 13,
     },
     cell5: {
         width: 100, backgroundColor: '#fff', textAlign: 'left', borderBottomWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, paddingTop: 2, paddingLeft: 2,
@@ -168,10 +171,10 @@ const styles = StyleSheet.create({
         width: 40, height: 'auto', backgroundColor: '#fff', borderBottomWidth: 1, borderRightWidth: 1,
     },
     cell9: {
-        width: 120, height: 'auto', backgroundColor: '#fff', borderBottomWidth: 1, borderRightWidth: 1,
+        width: 120, height: 'auto', backgroundColor: '#fff', textAlign: 'left', borderBottomWidth: 1, borderRightWidth: 1,
     },
     cell10: {
-        width: 84, height: 'auto', backgroundColor: '#fff', borderBottomWidth: 1, borderRightWidth: 1,
+        width: 84, height: 'auto', backgroundColor: '#fff', borderBottomWidth: 1, borderRightWidth: 1, padding: 3,
     },
     image: {
         width: 300, height: 350, marginTop: 5, marginBottom: 5, marginLeft: 120, paddingRight: 30,
@@ -187,7 +190,7 @@ const Checkbox = ({ label, check }) => (
     </View>
 );
 
-function MyDocument5({ formData, DataBoxValue, Instructors, Support, CLOs, effectives, assignfmtive, formatives, summatives, addsmtives, showOtherInput, imgFile, discrepancy }) {
+function MyDocument5({ formData, DataBoxValue, selectedInstructorNames, Support, CLOs, effectives, assignfmtive, formatives, summatives, addsmtives, showOtherInput, imgFile, discrepancy }) {
 
     return (
         <Document>
@@ -242,13 +245,21 @@ function MyDocument5({ formData, DataBoxValue, Instructors, Support, CLOs, effec
                     <Text style={{ marginLeft: 30 }}> {formData.responsible_Teacher || 'N/A'} </Text>
                 </View>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={{ marginLeft: 120 }}> อาจารย์ผู้สอน </Text>
-                    <Text style={{ marginLeft: 75 }}>{Instructors[0]}</Text>
+                <View style={{ flexDirection: 'row', marginLeft: 123 }}>
+                    <Text style={styles.font}>อาจารย์ผู้สอน</Text>
+                    <Text style={{ marginLeft: 78 }}>
+                        {selectedInstructorNames.length > 0 ? (
+                            <>
+                                <Text>{selectedInstructorNames[0]}</Text>
+                                {selectedInstructorNames.slice(1).map((name, index) => (
+                                    <Text key={index + 1} style={{ marginLeft: 244 }}>{'\n'}{name}</Text>
+                                ))}
+                            </>
+                        ) : (
+                            <Text>ไม่มีอาจารย์ผู้สอน</Text>
+                        )}
+                    </Text>
                 </View>
-                {Instructors.slice(1).map((inst, index) => (
-                    <Text key={index + 1} style={{ marginLeft: 244 }}>{inst}</Text>
-                ))}
 
                 <Text style={styles.topic}> 5. ภาคการศึกษา/ชั้นปีที่เรียน </Text>
                 <Text style={styles.description}>
@@ -290,7 +301,7 @@ function MyDocument5({ formData, DataBoxValue, Instructors, Support, CLOs, effec
                 </View>
 
                 <Text style={styles.topic}> 10. วันที่จัดทำหรือปรับปรุงรายละเอียดของรายวิชาครั้งล่าสุด </Text>
-                <Text style={styles.description3}> {formData.obe_latestC || 'N/A'} </Text>
+                <Text style={styles.description}> {formData.obe_latestC || 'N/A'} </Text>
             </Page>
 
             <Page style={styles.font}>
@@ -332,9 +343,9 @@ function MyDocument5({ formData, DataBoxValue, Instructors, Support, CLOs, effec
                     {Support.map((sp, index) => (
                         <View style={styles.headerRow} key={index}>
                             <Text style={styles.cell}> {`${sp.support_Name || ''}`} </Text>
-                            <Text style={styles.cell1}> {`${sp.support_Operation || ''}`} </Text>
-                            <Text style={styles.cell10}> {`${sp.support_NotOperation || ''}`} </Text>
-                            <Text style={styles.cell10}> {`${sp.support_Improvement || ''}`} </Text>
+                            <Text style={styles.cell1}>{`${sp.support_Operation || ''}`}</Text>
+                            <Text style={styles.cell10}>{`${sp.support_NotOperation || ''}`}</Text>
+                            <Text style={styles.cell10}>{`${sp.support_Improvement || ''}`}</Text>
                         </View>
                     ))}
                 </View>
@@ -343,6 +354,22 @@ function MyDocument5({ formData, DataBoxValue, Instructors, Support, CLOs, effec
                 {CLOs.map((clos, CLOindex) => (
                     <Text key={CLOindex} style={styles.description}> {clos.clo_code || 'N/A'} {clos.clo_Name || 'N/A'} </Text>
                 ))}
+            </Page>
+
+            <Page style={styles.font}>
+                <View style={styles.logo}>
+                    <Image src={LogoDoc} style={styles.logos} />
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header1}> หลักสูตร วิทยาศาสตรบัณฑิต </Text>
+                    <Text style={styles.header2}> ภาควิชา วิทยาการคอมพิวเตอร์และสารสนเทศ </Text>
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header3}> ระดับปริญญา ปริญญาตรี </Text>
+                    <Text style={styles.header4}> คณะ วิทยาศาสตร์ประยุกต์ </Text>
+                </View>
 
                 <Text style={styles.topic}> 5. ประสิทธิผลของวิธีการจัดการเรียนรู้และวิธีการประเมินผลที่ดำเนินการเพื่อทำให้เกิดผลลัพธ์การเรียนรู้ตามที่ระบุในรายละเอียดรายวิชา </Text>
                 <View style={styles.table}>
@@ -358,12 +385,12 @@ function MyDocument5({ formData, DataBoxValue, Instructors, Support, CLOs, effec
                     {CLOs.map((clo, CLOindex) => (
                         <View style={styles.headerRow} key={CLOindex}>
                             <Text style={styles.cell2}> {clo.clo_code || 'N/A'} </Text>
-                            <Text style={styles.cell3}> {effectives[CLOindex]?.effectOn_Student ? (<Image src={tickIcon} style={styles.icon} />) : null} </Text>
-                            <Text style={styles.cell4}> {effectives[CLOindex]?.experience_Name || 'N/A'} </Text>
-                            <Text style={styles.cell3}> {effectives[CLOindex]?.teaching_Method_Set || 'N/A'} </Text>
-                            <Text style={styles.cell4}> {effectives[CLOindex]?.measuring_Name || 'N/A'} </Text>
-                            <Text style={styles.cell3}> {effectives[CLOindex]?.measurement_Method || 'N/A'} </Text>
-                            <Text style={styles.cell4}> {effectives[CLOindex]?.improve_Clo} </Text>
+                            <Text style={styles.cell3}>{effectives[CLOindex]?.effectOn_Student ? (<Image src={tickIcon} style={styles.icon} />) : null}</Text>
+                            <Text style={styles.cell4}>{effectives[CLOindex]?.experience_Name || 'N/A'}</Text>
+                            <Text style={styles.cell3}>{effectives[CLOindex]?.teaching_Method_Set || 'N/A'}</Text>
+                            <Text style={styles.cell4}>{effectives[CLOindex]?.measuring_Name || 'N/A'} </Text>
+                            <Text style={styles.cell3}>{effectives[CLOindex]?.measurement_Method || 'N/A'}</Text>
+                            <Text style={styles.cell4}>{effectives[CLOindex]?.improve_Clo}</Text>
                         </View>
                     ))}
                 </View>
@@ -481,7 +508,7 @@ function MyDocument5({ formData, DataBoxValue, Instructors, Support, CLOs, effec
 
                 <Text style={styles.mode}> หมวดที่ 4 สรุปผลการจัดการเรียนการสอนของรายวิชา </Text>
 
-                <Text style={styles.topic}> 1. ผลการจัดการเรียนการสอนของรายวิชา </Text>
+                <Text style={styles.topic1}> 1. ผลการจัดการเรียนการสอนของรายวิชา </Text>
                 {imgFile.result_of_Teach && (
                     <Image style={styles.image} src={URL.createObjectURL(imgFile.result_of_Teach)} alt="Selected File" />
                 )}
@@ -573,32 +600,32 @@ function MyDocument5({ formData, DataBoxValue, Instructors, Support, CLOs, effec
                 <Text style={styles.mode}> หมวดที่ 5 ปัญหาและผลกระทบต่อการดำเนินการ </Text>
 
                 <Text style={styles.topic1}> 1. ประเด็นด้านทรัพยากรประกอบการเรียนและสิ่งอำนวยความสะดวก (ถ้ามี) </Text>
-                <Text style={styles.description}> {formData.resourceIssue || 'N/A'} </Text>
+                <Text style={styles.description}>{formData.resourceIssue || 'N/A'}</Text>
 
                 <Text style={styles.topic}> 2. ประเด็นด้านการบริหารจัดการ (ถ้ามี) </Text>
-                <Text style={styles.description}> {formData.administrativeIssues || 'N/A'} </Text>
+                <Text style={styles.description}>{formData.administrativeIssues || 'N/A'}</Text>
 
                 <Text style={styles.mode}> หมวดที่ 6 การประเมินรายวิชา </Text>
 
                 <Text style={styles.topic1}> 1. ผลการประเมินรายวิชาโดยนักศึกษา (แนบเอกสาร) </Text>
                 <Text style={styles.description}> 1.1 ข้อวิพากษ์ที่สำคัญจากผลการประเมินโดยนักศึกษา </Text>
-                <Text style={styles.description}> {formData.evaluation_Students || 'N/A'} </Text>
+                <Text style={styles.description5}>{formData.evaluation_Students || 'N/A'}</Text>
                 <Text style={styles.description}> 1.2 ความเห็นของอาจารย์ผู้สอนต่อข้อวิพากษ์ตามข้อ 1.1 </Text>
-                <Text style={styles.description}> {formData.evaluation_Teacher || 'N/A'} </Text>
+                <Text style={styles.description5}>{formData.evaluation_Teacher || 'N/A'}</Text>
 
                 <Text style={styles.topic}> 2. ผลการประเมินรายวิชาโดยวิธีอื่น </Text>
                 <Text style={styles.description}> 2.1 ข้อวิพากษ์ที่สำคัญจากผลการประเมินโดยวิธีอื่น </Text>
-                <Text style={styles.description}> {formData.evaluation_Other || 'N/A'} </Text>
+                <Text style={styles.description5}>{formData.evaluation_Other || 'N/A'}</Text>
                 <Text style={styles.description}> 2.2 ความเห็นของอาจารย์ผู้สอนต่อข้อวิพากษ์ตามข้อ 2.1 </Text>
-                <Text style={styles.description}> {formData.comment_Teacher_6222 || 'N/A'} </Text>
+                <Text style={styles.description5}>{formData.comment_Teacher_6222 || 'N/A'}</Text>
 
                 <Text style={styles.mode}> หมวดที่ 7 แผนการปรับปรุง </Text>
 
                 <Text style={styles.topic1}> 1. การดำเนินการเพื่อการปรับปรุงการเรียนการสอน/รายวิชา (นอกเหนือจากที่ระบุไว้ในหมวดที่ 2) </Text>
-                <Text style={styles.description}> {formData.improveTeaching7_1 || 'N/A'} </Text>
+                <Text style={styles.description}>{formData.improveTeaching7_1 || 'N/A'}</Text>
 
                 <Text style={styles.topic}> 2. ข้อเสนอแนะของอาจารย์ผู้รับผิดชอบรายวิชาต่ออาจารย์ผู้รับผิดชอบหลักสูตร </Text>
-                <Text style={styles.description}> {formData.recomment7_2 || 'N/A'} </Text>
+                <Text style={styles.description}>{formData.recomment7_2 || 'N/A'}</Text>
             </Page>
 
         </Document >

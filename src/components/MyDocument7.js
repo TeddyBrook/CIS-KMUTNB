@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Document, Page, Text, Font, Image, View, StyleSheet } from '@react-pdf/renderer';
 
 /* img */
@@ -286,15 +286,22 @@ const styles = StyleSheet.create({
 const Checkbox = ({ label, check }) => (
     <View style={styles.box}>
         <View style={styles.checked}>
-            {check ? <Image src={tickIcon} style={styles.icon} /> : <View style={styles.unchecked} />}
+            {check ? (
+                <Image src={tickIcon} style={styles.icon} />
+            ) : (
+                <View style={styles.unchecked} />
+            )}
         </View>
         <Text> {label} </Text>
     </View>
 );
 
-function MyDocument7({ curriculum, formData, curriculum_Teacher, imgFile, analysisCourse, chooseCourse, analysisdidnot,
-    courseNtoffered, editTeaching, notregiscourse, manageCurriculum, courseEvalution, stakeholdersEvl, elo_comment,
-    qualifications, suggestevalutor, progress, newEducations }) {
+function MyDocument7({ curriculum, formData, curriculum_Teacher, imgFile, eloOptions, analysisCourse, analysisdidnot, courseNtoffered, editTeaching, notregiscourse, manageCurriculum, courseEvalution, stakeholdersEvl, elo_comment, qualifications, suggestevalutor, progress, newEducations }) {
+
+    const eloMapping = {};
+    eloOptions.forEach(elo => {
+        eloMapping[elo.elo_Id] = { elo_code: elo.elo_code, elo_Name: elo.elo_Name };
+    });
 
     return (
         <Document>
@@ -345,7 +352,7 @@ function MyDocument7({ curriculum, formData, curriculum_Teacher, imgFile, analys
                         <Text style={styles.headerCell1}> คุณวุฒิ </Text>
                         <Text style={styles.headerCell2}> ตำแหน่งวิชาการ </Text>
                     </View>
-                    {curriculum_Teacher.map((teacher, index) => (
+                    {curriculum_Teacher.slice(0, 3).map((teacher, index) => (
                         <View style={styles.headerRow} key={index}>
                             <Text style={styles.cell}>{teacher.instructor || 'N/A'}</Text>
                             <Text style={styles.cell1}>{teacher.qualification || 'N/A'}</Text>
@@ -353,6 +360,39 @@ function MyDocument7({ curriculum, formData, curriculum_Teacher, imgFile, analys
                         </View>
                     ))}
                 </View>
+            </Page>
+
+            <Page style={styles.font}>
+                <View style={styles.logo}>
+                    <Image src={LogoDoc} style={styles.logos} />
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header1}> หลักสูตร วิทยาศาสตรบัณฑิต </Text>
+                    <Text style={styles.header2}> ภาควิชา วิทยาการคอมพิวเตอร์และสารสนเทศ </Text>
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header3}> ระดับปริญญา ปริญญาตรี </Text>
+                    <Text style={styles.header4}> คณะ วิทยาศาสตร์ประยุกต์ </Text>
+                </View>
+
+                <Text style={styles.topic}> 1.3 อาจารย์ผู้รับผิดชอบหลักสูตร </Text>
+                <View style={styles.table}>
+                    <View style={styles.headerRow}>
+                        <Text style={styles.headerCell}> ชื่อ-สกุล </Text>
+                        <Text style={styles.headerCell1}> คุณวุฒิ </Text>
+                        <Text style={styles.headerCell2}> ตำแหน่งวิชาการ </Text>
+                    </View>
+                    {curriculum_Teacher.slice(3).map((teacher, index) => (
+                        <View style={styles.headerRow} key={index}>
+                            <Text style={styles.cell}>{teacher.instructor || 'N/A'}</Text>
+                            <Text style={styles.cell1}>{teacher.qualification || 'N/A'}</Text>
+                            <Text style={styles.cell1}>{teacher.positions || 'N/A'}</Text>
+                        </View>
+                    ))}
+                </View>
+
                 <Text style={styles.body1}>
                     1.4 วันที่รายงาน <Text style={styles.font}> {formData.obe_Report_Date || 'N/A'} </Text>
                 </Text>
@@ -362,6 +402,7 @@ function MyDocument7({ curriculum, formData, curriculum_Teacher, imgFile, analys
                 </Text>
 
                 <Text style={styles.mode}> หมวดที่ 2 ข้อมูลด้านนักศีกษา </Text>
+
                 <Text style={styles.topic1}>วิเคราะห์ผลข้อมูลด้านนักศึกษา</Text>
                 <Text style={styles.description}>{formData.analysis_DataStudent || 'N/A'}</Text>
             </Page>
@@ -382,11 +423,31 @@ function MyDocument7({ curriculum, formData, curriculum_Teacher, imgFile, analys
                 </View>
 
                 <Text style={styles.mode}> หมวดที่ 3 ข้อมูลสรุปรายวิชาของหลักสูตร </Text>
+
                 <Text style={styles.topic}> 3.1 สรุปผลรายวิชาที่เปิดสอนในภาคการศึกษา/ปีการศึกษา </Text>
                 <Text style={styles.topic2}>ระบุรายวิชาที่เปิดสอนทั้งหมดพร้อมจำนวนนักศึกษาที่ลงทะเบียนเรียนจำนวนนักศึกษาที่สอบผ่านแต่ละรายวิชาและการกระจายของ ระดับคะแนน</Text>
                 {imgFile.obe7_img_analysis && (
                     <Image style={styles.image} src={URL.createObjectURL(imgFile.obe7_img_analysis)} alt="Selected File" />
                 )}
+
+                <Text style={styles.topic1}>รายละเอียดเพิ่มเติม</Text>
+                <Text style={styles.description}>{formData.obe_Dscript_7301 || ''}</Text>
+            </Page>
+
+            <Page style={styles.font}>
+                <View style={styles.logo}>
+                    <Image src={LogoDoc} style={styles.logos} />
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header1}> หลักสูตร วิทยาศาสตรบัณฑิต </Text>
+                    <Text style={styles.header2}> ภาควิชา วิทยาการคอมพิวเตอร์และสารสนเทศ </Text>
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header3}> ระดับปริญญา ปริญญาตรี </Text>
+                    <Text style={styles.header4}> คณะ วิทยาศาสตร์ประยุกต์ </Text>
+                </View>
 
                 <Text style={styles.topic}> 3.2 การวิเคราะห์รายวิชาที่มีผลการเรียนไม่ปกติ </Text>
                 <Text style={styles.topic2}>ระบุรหัสและชื่อรายวิชาที่มีการแจกแจงระดับคะแนนไม่ปกติ เช่น ได้ระดับคะแนนสูงมากหรือต่ำเกินไปต่างจากเกณฑ์มาตรฐาน การให้ระดับคะแนนในแต่ละรายวิชาหรือนักศึกษาสอบตกมากเกินไปการสอนไม่ตรงกับเนื้อหาที่กำหนดของรายวิชา เป็นต้น นอกจากนี้ให้ระบุวิธีการตรวจสอบสาเหตุความผิดปกติที่ทำให้เกิดความไม่ปกติจากข้อกำหนดหรือเกณฑ์ที่ตั้งไว้และมาตรการแก้ไข ที่ดำเนินการไปแล้ว</Text>
@@ -411,9 +472,6 @@ function MyDocument7({ curriculum, formData, curriculum_Teacher, imgFile, analys
                         </View>
                     ))}
                 </View>
-
-                <Text style={styles.topic1}>รายละเอียดเพิ่มเติม</Text>
-                <Text style={styles.description}>{formData.obe_Dscript_7302 || ''}</Text>
             </Page>
 
             <Page style={styles.font}>
@@ -430,6 +488,9 @@ function MyDocument7({ curriculum, formData, curriculum_Teacher, imgFile, analys
                     <Text style={styles.header3}> ระดับปริญญา ปริญญาตรี </Text>
                     <Text style={styles.header4}> คณะ วิทยาศาสตร์ประยุกต์ </Text>
                 </View>
+
+                <Text style={styles.topic1}>รายละเอียดเพิ่มเติม</Text>
+                <Text style={styles.description}>{formData.obe_Dscript_7302 || ''}</Text>
 
                 <Text style={styles.topic}> 3.3 การวิเคราะห์รายวิชาที่ไม่บรรลุผลลัพธ์การเรียนรู้ที่คาดหวังของรายวิชา (CLOs) </Text>
                 <Text style={styles.topic2}>ระบุรหัสและชื่อรายวิชาที่ดำเนินการแล้วไม่สามารถทำให้บรรลุผลลัพธ์การเรียนรู้ที่คาดหวังของรายวิชา (CLOs)ได้นอกจากนี้ให้ ระบุ CLO ที่ไม่บรรลุ ผลลัพธ์การเรียนรู้ที่คาดหวังของหลักสูตร (ELO) ที่สอดคล้องกับ CLO ที่ไม่บรรลุ เหตุผลที่ทำให้ไม่สามารถ ทำให้บรรลุได้และแนวทางการพัฒนาปรับปรุงเพื่อให้นักศึกษาบรรลุตามแต่ละ CLO นั้นๆ</Text>
@@ -473,10 +534,28 @@ function MyDocument7({ curriculum, formData, curriculum_Teacher, imgFile, analys
                     <Checkbox
                         label="ELOs ไม่บรรลุครบทุกตัว"
                         check={formData.elos_Achieved === 'ELOs ไม่บรรลุครบทุกตัว'}
-                    /> && <Text>แต่มีมาตรการแก้ไขที่ดำเนินการเพื่อให้ ELOs บรรลุ คือ</Text>
+                    />
                     {formData.elos_Achieved.includes("ELOs ไม่บรรลุครบทุกตัว") && (
-                        <Text style={{ color: 'black' }}> {formData.elo_NtArchive_Dscript} </Text>
+                        <Text> แต่มีมาตรการแก้ไขที่ดำเนินการเพื่อให้ ELOs บรรลุ คือ:
+                            <Text style={{ color: 'black' }}> {formData.elo_NtArchive_Dscript} </Text>
+                        </Text>
                     )}
+                </View>
+            </Page>
+
+            <Page style={styles.font}>
+                <View style={styles.logo}>
+                    <Image src={LogoDoc} style={styles.logos} />
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header1}> หลักสูตร วิทยาศาสตรบัณฑิต </Text>
+                    <Text style={styles.header2}> ภาควิชา วิทยาการคอมพิวเตอร์และสารสนเทศ </Text>
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header3}> ระดับปริญญา ปริญญาตรี </Text>
+                    <Text style={styles.header4}> คณะ วิทยาศาสตร์ประยุกต์ </Text>
                 </View>
 
                 <Text style={styles.topic}> 3.5 การเปิดรายวิชาในภาคหรือปีการศึกษา </Text>
@@ -583,6 +662,22 @@ function MyDocument7({ curriculum, formData, curriculum_Teacher, imgFile, analys
 
                 <Text style={styles.topic}> 4.3 การเปลี่ยนแปลงภายนอกสถาบัน (ถ้ามี) ที่มีผลกระทบต่อหลักสูตรในช่วง 1 ปีที่ผ่านมา </Text>
                 <Text style={styles.description1}>{formData.obe_Dscript_74301 || ' '}</Text>
+            </Page>
+
+            <Page style={styles.font}>
+                <View style={styles.logo}>
+                    <Image src={LogoDoc} style={styles.logos} />
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header1}> หลักสูตร วิทยาศาสตรบัณฑิต </Text>
+                    <Text style={styles.header2}> ภาควิชา วิทยาการคอมพิวเตอร์และสารสนเทศ </Text>
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header3}> ระดับปริญญา ปริญญาตรี </Text>
+                    <Text style={styles.header4}> คณะ วิทยาศาสตร์ประยุกต์ </Text>
+                </View>
 
                 <Text style={styles.mode}> หมวดที่ 5 สรุปการประเมินหลักสูตรและคุณภาพการสอน </Text>
 
@@ -592,12 +687,86 @@ function MyDocument7({ curriculum, formData, curriculum_Teacher, imgFile, analys
                         <Text style={styles.headerCell25}> ข้อวิพากษ์ที่สำคัญจากผลการประเมิน </Text>
                         <Text style={styles.headerCell26}> ข้อเสนอการเปลี่ยนแปลงในหลักสูตรจากผลการประเมิน </Text>
                     </View>
-                    {courseEvalution.map((Cevl, index) => (
+                    {courseEvalution.slice(0, 8).map((Cevl, index) => (
                         <View style={styles.headerRow} key={index}>
                             <Text style={styles.cell8}> {Cevl.improtant_Cri} </Text>
                             <Text style={styles.cell9}> {Cevl.Propose_Chg} </Text>
                         </View>
                     ))}
+                </View>
+            </Page>
+
+            <Page style={styles.font}>
+                <View style={styles.logo}>
+                    <Image src={LogoDoc} style={styles.logos} />
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header1}> หลักสูตร วิทยาศาสตรบัณฑิต </Text>
+                    <Text style={styles.header2}> ภาควิชา วิทยาการคอมพิวเตอร์และสารสนเทศ </Text>
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header3}> ระดับปริญญา ปริญญาตรี </Text>
+                    <Text style={styles.header4}> คณะ วิทยาศาสตร์ประยุกต์ </Text>
+                </View>
+
+                <View style={styles.table}>
+                    <View style={styles.headerRow}>
+                        <Text style={styles.headerCell25}> ข้อวิพากษ์ที่สำคัญจากผลการประเมิน </Text>
+                        <Text style={styles.headerCell26}> ข้อเสนอการเปลี่ยนแปลงในหลักสูตรจากผลการประเมิน </Text>
+                    </View>
+                    {courseEvalution.slice(8, 16).map((Cevl, index) => (
+                        <View style={styles.headerRow} key={index}>
+                            <Text style={styles.cell8}> {Cevl.improtant_Cri} </Text>
+                            <Text style={styles.cell9}> {Cevl.Propose_Chg} </Text>
+                        </View>
+                    ))}
+                </View>
+            </Page>
+
+            <Page style={styles.font}>
+                <View style={styles.logo}>
+                    <Image src={LogoDoc} style={styles.logos} />
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header1}> หลักสูตร วิทยาศาสตรบัณฑิต </Text>
+                    <Text style={styles.header2}> ภาควิชา วิทยาการคอมพิวเตอร์และสารสนเทศ </Text>
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header3}> ระดับปริญญา ปริญญาตรี </Text>
+                    <Text style={styles.header4}> คณะ วิทยาศาสตร์ประยุกต์ </Text>
+                </View>
+
+                <View style={styles.table}>
+                    <View style={styles.headerRow}>
+                        <Text style={styles.headerCell25}> ข้อวิพากษ์ที่สำคัญจากผลการประเมิน </Text>
+                        <Text style={styles.headerCell26}> ข้อเสนอการเปลี่ยนแปลงในหลักสูตรจากผลการประเมิน </Text>
+                    </View>
+                    {courseEvalution.slice(16, 24).map((Cevl, index) => (
+                        <View style={styles.headerRow} key={index}>
+                            <Text style={styles.cell8}> {Cevl.improtant_Cri} </Text>
+                            <Text style={styles.cell9}> {Cevl.Propose_Chg} </Text>
+                        </View>
+                    ))}
+                </View>
+            </Page>
+
+            <Page style={styles.font}>
+                <View style={styles.logo}>
+                    <Image src={LogoDoc} style={styles.logos} />
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header1}> หลักสูตร วิทยาศาสตรบัณฑิต </Text>
+                    <Text style={styles.header2}> ภาควิชา วิทยาการคอมพิวเตอร์และสารสนเทศ </Text>
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header3}> ระดับปริญญา ปริญญาตรี </Text>
+                    <Text style={styles.header4}> คณะ วิทยาศาสตร์ประยุกต์ </Text>
                 </View>
 
                 <Text style={styles.topic}> 5.2 การประเมินหลักสูตรจากผู้มีส่วนได้ส่วนเสียต่อหลักสูตร </Text>
@@ -624,11 +793,11 @@ function MyDocument7({ curriculum, formData, curriculum_Teacher, imgFile, analys
                 <View style={styles.description4}>
                     <Checkbox
                         label="อื่นๆ(ระบุ)"
-                        check={formData.people}
+                        check={formData.people === 'อื่นๆ'}
                         style={styles.checkbox}
                     />
-                    {formData.people && (
-                        <Text style={{ color: 'black' }}> {formData.obe_75201Other_Dscript || ''} </Text>
+                    {formData.people === "อื่นๆ" && (
+                        <Text style={{ color: 'black' }}> {formData.people_description || ''} </Text>
                     )}
                 </View>
 
@@ -643,6 +812,22 @@ function MyDocument7({ curriculum, formData, curriculum_Teacher, imgFile, analys
                             <Text style={styles.cell9}> {stk.Propose_Chg} </Text>
                         </View>
                     ))}
+                </View>
+            </Page>
+
+            <Page style={styles.font}>
+                <View style={styles.logo}>
+                    <Image src={LogoDoc} style={styles.logos} />
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header1}> หลักสูตร วิทยาศาสตรบัณฑิต </Text>
+                    <Text style={styles.header2}> ภาควิชา วิทยาการคอมพิวเตอร์และสารสนเทศ </Text>
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header3}> ระดับปริญญา ปริญญาตรี </Text>
+                    <Text style={styles.header4}> คณะ วิทยาศาสตร์ประยุกต์ </Text>
                 </View>
 
                 <Text style={styles.topic}> 5.3 สรุปข้อคิดเห็นจากผู้มีส่วนได้ส่วนเสียต่อผลการเรียนรู้ที่คาดหวังของหลักสูตร (ELOs) </Text>
@@ -668,13 +853,14 @@ function MyDocument7({ curriculum, formData, curriculum_Teacher, imgFile, analys
                 <View style={styles.description4}>
                     <Checkbox
                         label="อื่นๆ(ระบุ)"
-                        check={formData.people_other}
+                        check={formData.people_other === "อื่นๆ"}
                         style={styles.checkbox}
                     />
-                    {formData.people_other && (
-                        <Text style={{ color: 'black' }}> {formData.obe_75301Other_Dscript || ''} </Text>
+                    {formData.people_other === "อื่นๆ" && (
+                        <Text style={{ color: 'black' }}> {formData.peopleother_description || ''} </Text>
                     )}
                 </View>
+
 
                 <View style={styles.table}>
                     <View style={styles.headerRow}>
@@ -682,13 +868,22 @@ function MyDocument7({ curriculum, formData, curriculum_Teacher, imgFile, analys
                         <Text style={styles.headerCell27}> ความเห็นของผู้มีส่วนได้ ส่วนเสียต่อนักศึกษาของหลักสูตร </Text>
                         <Text style={styles.headerCell27}> แผน/แนวทางการปรับปรุง เพื่อให้นักศึกษาบรรลุ ELOs </Text>
                     </View>
-                    {elo_comment.map((cm, index) => (
-                        <View style={styles.headerRow} key={index}>
-                            <Text style={styles.cell8}> {cm.elo_Id} </Text>
-                            <Text style={styles.cell9}> {cm.comment_Student_elo} </Text>
-                            <Text style={styles.cell9}> {cm.improvement_elo} </Text>
-                        </View>
-                    ))}
+                    {elo_comment.length > 0 ? (
+                        elo_comment.map((cm, index) => {
+                            const eloDetails = eloMapping[cm.elo_Id];
+                            return (
+                                <View style={styles.headerRow} key={index}>
+                                    <Text style={styles.cell8}>
+                                        {eloDetails ? `${eloDetails.elo_code} ${eloDetails.elo_Name}` : 'Unknown ELO'}
+                                    </Text>
+                                    <Text style={styles.cell9}> {cm.comment_Student_elo} </Text>
+                                    <Text style={styles.cell9}> {cm.improvement_elo} </Text>
+                                </View>
+                            );
+                        })
+                    ) : (
+                        <Text>No data available for ELO comments</Text>
+                    )}
                 </View>
             </Page>
 

@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import { pdf } from "@react-pdf/renderer";
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faMinus } from '@fortawesome/free-solid-svg-icons';
 
 /* CSS */
 import Fill5 from '../style/Fill5.css';
@@ -71,27 +74,290 @@ function Fill_obe5() {
         }));
     };
 
+    const [userIds, setUserIds] = useState([]);
+    const [selectedUserId, setSelectedUserId] = useState('');
+    const [availableUserIds, setAvailableUserIds] = useState([]);
+
+    const [courseId, setCourseId] = useState([]);
+    const [selectedCourseId, setSelectedCourseId] = useState('');
+
+    useEffect(() => {
+        const fetchCourses = async () => {
+            try {
+                const response = await axios.get('http://localhost:8081/api/selectcourse');
+                if (response.data && Array.isArray(response.data.course)) {
+                    setCourseId(response.data.course);
+                }
+            } catch (error) {
+                console.error('Error Fetching Courses:', error);
+            }
+        };
+        fetchCourses();
+    }, []);
+
+    useEffect(() => {
+        const fetchUserIds = async () => {
+            if (!selectedCourseId) return;
+            try {
+                const response = await axios.get(`http://localhost:8081/api/getCourseUserIds/${selectedCourseId}`);
+                const users = response.data.users;
+                setAvailableUserIds(users);
+            } catch (error) {
+                console.error('Error fetching user IDs:', error);
+            }
+        };
+        fetchUserIds();
+    }, [selectedCourseId]);
+
+    const fetchOBEData = async () => {
+        if (!selectedCourseId || !selectedUserId) {
+            return;
+        }
+
+        try {
+            const response = await axios.get(`http://localhost:8081/api/obe3/${selectedCourseId}/${selectedUserId}`);
+            const obe3Data = response.data.obe3Data;
+
+            if (!obe3Data) {
+                console.error('No OBE 3 Data Found for the Selected Course and User.');
+                return;
+            }
+
+            setFormData({
+                college: obe3Data.university_Name || '',
+                campus: obe3Data.campusObe3 || '',
+                faculty: obe3Data.facultyObe3 || '',
+                department_Name: obe3Data.departmentObe3 || '',
+                study_Area: obe3Data.obe3_studyArea || '',
+                course_Id: obe3Data.course_Id || '',
+                courseNamecode: obe3Data.courseNameCode || '',
+                course_Credit: obe3Data.obe3_Credit || '',
+                curriculum_Name: obe3Data.obe3_Curriculum || '',
+                branch: obe3Data.obe3_branch || '',
+                course_Category: obe3Data.obe3_courseCategory || '',
+                responsible_Teacher: obe3Data.responsible_Teacher || '',
+                semster_term: obe3Data.obe3_semster || '',
+                year_of_study: obe3Data.obe3_yearstudy || '',
+                prerequisites: obe3Data.obe3_prereq || '',
+                corequisites: obe3Data.obe3_coreq || '',
+                obe_latestC: obe3Data.obe3_latestC || '',
+            });
+
+            setDataBoxValue({
+                compare_teach_bl: obe3Data.compare_teach_bl,
+                outsider_teach_bl: obe3Data.outsider_teach_bl,
+                reseach_bl: obe3Data.reseach_bl,
+                society_bl: obe3Data.society_bl,
+                culture_bl: obe3Data.culture_bl,
+            })
+
+            setInstructors(response.data.instructors);
+        } catch (error) {
+            console.error('Error fetching OBE Data:', error);
+        }
+    };
+
+    const fetchCLOs = async () => {
+        if (!selectedCourseId || !selectedUserId) {
+            console.error('Course ID or User ID is missing');
+            return;
+        }
+        try {
+            const response = await axios.get(`http://localhost:8081/api/clos/${selectedCourseId}/${selectedUserId}`);
+            const dataCLOs = response.data.results;
+
+            if (!dataCLOs || dataCLOs.length === 0) {
+                console.error('No Course Learning Outcome Data Found for the Selected Course and User.');
+                return;
+            }
+
+            setCLOs(dataCLOs.map(clo => ({
+                clo_Id: clo.clo_Id,
+                clo_code: clo.clo_code,
+                clo_Name: clo.clo_Name,
+                cloCodeName: `${clo.clo_code} ${clo.clo_Name}`,
+            })));
+        } catch (error) {
+            console.error('Error fetching Course Learning Outcome Data:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (selectedCourseId && selectedUserId) {
+            fetchOBEData();
+            fetchCLOs();
+        }
+    }, [selectedCourseId, selectedUserId]);
+
+    const [yearobe5, setYearobe5] = useState([]);
+    const [selectyearobe5, setselectyearobe5] = useState([]);
+
+    useEffect(() => {
+        const fetchyearobe5 = async () => {
+            try {
+                const response = await axios.get('http://localhost:8081/api/yearobe5');
+                setYearobe5(response.data.results);
+            } catch (error) {
+                console.error('Error Fetching Years:', error);
+            }
+        };
+        fetchyearobe5();
+    }, [])
+
+    const [obeData, setObeData] = useState(null);
+    const [obe5Ids, setObe5Ids] = useState('');
+
+    const fetchobe5 = async () => {
+        try {
+            const response = await axios.get('http://localhost:8081/api/dataobe5', {
+                params: {
+                    user_Id: user.user_Id,
+                    course_Id: selectedCourseId,
+                    year: selectyearobe5
+                },
+            });
+
+            const data = response.data.results && response.data.results[0];
+            console.log('Results:', response.data.result);
+            if (data) {
+                setObeData(data);
+                setObe5Ids(data.obe5_Id);
+                alert('ดึงข้อมูลมาเรียบร้อย');
+            } else {
+                alert("No Data Found.");
+            }
+        } catch (error) {
+            console.error('Error Fetching OBE 5 data:', error);
+        }
+    }
+
+    const handleSearch = () => {
+        if (selectedCourseId && selectyearobe5) {
+            fetchobe5();
+        } else {
+            alert('Please Select Year and Course');
+        }
+    }
+
+    useEffect(() => {
+        if (obeData) {
+            const obeinfo = obeData;
+
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                report_Overtime: obeinfo.report_Overtime,
+                topic_Overtime: obeinfo.topic_Overtime,
+                abnormal_Score: obeinfo.abnormal_Score,
+                other4_4_4_Description: obeinfo.other4_4_4_description || '',
+                resourceIssue: obeinfo.resourceIssue,
+                administrativeIssues: obeinfo.administrativeIssues,
+                evaluation_Students: obeinfo.evaluation_Student,
+                evaluation_Teacher: obeinfo.evaluation_Teacher,
+                evaluation_Other: obeinfo.evaluation_Other,
+                comment_Teacher_6222: obeinfo.comment_Teacher_6222,
+                improveTeaching7_1: obeinfo.improveTeaching7_1,
+                recomment7_2: obeinfo.recomment7_2,
+            }));
+
+            setDataBoxValue(prevDataBoxValue => ({
+                ...prevDataBoxValue,
+                comit_course_bl: obeinfo.comit_course_bl,
+                check_Depart_bl: obeinfo.check_Depart_bl,
+                check_Teacher_bl: obeinfo.check_Teacher_bl,
+                other4_4_4_bl: obeinfo.other4_4_4_bl === 1,
+            }));
+        }
+    }, [obeData])
+
+    const fetchfmtive = async () => {
+        try {
+            const response = await axios.get('http://localhost:8081/api/datafmtive', {
+                params: { obe5_Id: obe5Ids }
+            });
+
+            if (response.data.results && response.data.results.length > 0) {
+                setFormative(response.data.results);
+                setAssignfmtive(response.data.results[0]);
+            }
+            console.log('Fetch Data Formative Successful');
+        } catch (error) {
+            console.error('Error Fetching Latest Formative Data:', error);
+        }
+    }
+
+    const fetchsummative = async () => {
+        try {
+            const response = await axios.get('http://localhost:8081/api/datasummative', {
+                params: { obe5_Id: obe5Ids }
+            });
+
+            if (response.data.results && response.data.results.length > 0) {
+                setSummatives(response.data.results);
+            }
+            console.log('Fetch Data Summative Successful');
+        } catch (error) {
+            console.error('Error Fetching Latest Summative Data:', error);
+        }
+    }
+
+    const fetchplanover = async () => {
+        try {
+            const response = await axios.get('http://localhost:8081/api/dataevlplan', {
+                params: { obe5_Id: obe5Ids }
+            });
+
+            if (response.data.results && response.data.results.length > 0) {
+                setDiscrepancy(response.data.results);
+            }
+            console.log('Fetch Data Plan Over Successful');
+        } catch (error) {
+            console.error('Error Fetching Latest Plan Over Data:', error);
+        }
+    }
+
+    const fetchsupport = async () => {
+        try {
+            const response = await axios.get('http://localhost:8081/api/datasupport', {
+                params: { obe5_Id: obe5Ids }
+            });
+
+            if (response.data.results && response.data.results.length > 0) {
+                setSupport(response.data.results);
+            }
+            console.log('Fetch Data Support Successful');
+        } catch (error) {
+            console.error('Error Fetching Latest Support Data:', error);
+        }
+    }
+
+    const handleSearchLatest = (e) => {
+        e.preventDefault();
+        fetchsupport();
+        fetchfmtive();
+        fetchsummative();
+        fetchplanover();
+    }
+
     /* Function ข้อมูลอาจารย์ผู้สอน */
-    const [Instructors, setInstructors] = useState([]);
+    const [instructors, setInstructors] = useState([
+        { course_instructor: '' }
+    ]);
 
     const handleAddInstructor = () => {
-        setInstructors((prevSelected) => [...prevSelected, '']);
+        setInstructors([...instructors, { course_instructor: '' }]);
     };
 
     const handleDeleteInstructor = (index) => {
-        setInstructors((prevSelected) => {
-            const newSelected = [...prevSelected];
-            newSelected.splice(index, 1);
-            return newSelected;
-        });
+        const newInstructors = [...instructors];
+        newInstructors.splice(index, 1);
+        setInstructors(newInstructors);
     };
 
     const handleInstructorChange = (index, value) => {
-        setInstructors((prevSelected) => {
-            const newSelected = [...prevSelected];
-            newSelected[index] = value;
-            return newSelected;
-        });
+        const updatedInstructors = instructors.map((inst, i) =>
+            i === index ? { ...inst, course_instructor: value } : inst
+        );
+        setInstructors(updatedInstructors);
     };
 
     /* Function ข้อมูลสิ่งสนับสนุน */
@@ -129,7 +395,7 @@ function Fill_obe5() {
                     support_Operation: sp.support_Operation,
                     support_NotOperation: sp.support_NotOperation,
                     support_Improvement: sp.support_Improvement,
-                    course_Id: formData.course_Id,
+                    course_Id: selectedCourseId,
                     obe5_Id: obe5_Id,
                 }
 
@@ -248,7 +514,7 @@ function Fill_obe5() {
                     measuring_Name: ef.measuring_Name,
                     measurement_Method: ef.measurement_Method,
                     improve_Clo: ef.improve_Clo,
-                    course_Id: formData.course_Id,
+                    course_Id: selectedCourseId,
                     obe5_Id: obe5_Id,
                 }
 
@@ -328,7 +594,7 @@ function Fill_obe5() {
                     fmtive_Name: fmts.fmtive_Name,
                     fmtive_setplan: fmts.fmtive_setplan,
                     fmtive_develop: fmts.fmtive_develop,
-                    course_Id: formData.course_Id,
+                    course_Id: selectedCourseId,
                     obe5_Id: obe5_Id,
                 }
 
@@ -414,7 +680,7 @@ function Fill_obe5() {
                     smtive_Name: smts.smtive_Name,
                     smtive_setplan: smts.smtive_setplan,
                     smtive_Develop: smts.smtive_Develop,
-                    course_Id: formData.course_Id,
+                    course_Id: selectedCourseId,
                     obe5_Id: obe5_Id,
                 }
 
@@ -471,8 +737,8 @@ function Fill_obe5() {
     const handleSaveImg = async (obe5_Id) => {
         const data = new FormData();
 
-        data.append('result_of_Teach', imgFile.result_of_Teach);
-        data.append('obe5_Id', obe5_Id.obe5_Id)
+        data.append('results_Of_Teach', imgFile.result_of_Teach || "");
+        data.append('obe5_Id', obe5_Id)
 
         try {
             const response = await fetch('http://localhost:8081/api/roltech', {
@@ -480,8 +746,12 @@ function Fill_obe5() {
                 body: data,
             });
 
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
             const result = await response.json();
-            console.log('File URL:', result.fileUrl);
+            console.log('Response Message:', result.message);
         } catch (error) {
             console.error('Error Uploading File:', error);
         }
@@ -497,6 +767,7 @@ function Fill_obe5() {
         planned_Assessment: '',
         actual_Assessment: '',
     })));
+
 
     const handleAddDiscrepancy = () => {
         setDiscrepancy([...discrepancy, {
@@ -524,7 +795,7 @@ function Fill_obe5() {
 
     const handleSaveEvalplan = async (obe5_Id) => {
         try {
-            const evlplan = summatives.map((dis, index) => {
+            const evlplan = discrepancy.map((dis, index) => {
 
                 const evalutionplan = {
                     learning_outcome: dis.learning_outcome,
@@ -555,6 +826,22 @@ function Fill_obe5() {
         }
     }
 
+    /* Function Resize Input */
+    const [description1, setDescription1] = useState('');
+    const [description2, setDescription2] = useState('');
+    const [description3, setDescription3] = useState('');
+    const [description4, setDescription4] = useState('');
+    const [description5, setDescription5] = useState('');
+    const [description6, setDescription6] = useState('');
+    const [description7, setDescription7] = useState('');
+    const [description8, setDescription8] = useState('');
+
+    const handleResize = (event, setDescription) => {
+        setDescription(event.target.value);
+        event.target.style.height = 'auto';
+        event.target.style.height = event.target.scrollHeight + 'px';
+    };
+
     /* Function Save Data OBE 5 */
     const handleSaveOBE5 = async () => {
         try {
@@ -565,7 +852,7 @@ function Fill_obe5() {
                 facultyObe5: formData.faculty,
                 departmentObe5: formData.department_Name,
                 obe5_studyArea: formData.study_Area,
-                course_Id: formData.course_Id,
+                course_Id: selectedCourseId,
                 courseNamecode: formData.courseNamecode,
                 obe5_Credit: formData.course_Credit,
                 obe5_Curriculum: formData.curriculum_Name,
@@ -582,7 +869,7 @@ function Fill_obe5() {
                 other4_4_4_description: formData.other4_4_4_Description,
                 resourceIssue: formData.resourceIssue,
                 administrativeIssues: formData.administrativeIssues,
-                evaluation_Students: formData.evaluation_Students,
+                evaluation_Student: formData.evaluation_Students,
                 evaluation_Teacher: formData.evaluation_Teacher,
                 evaluation_Other: formData.evaluation_Other,
                 comment_Teacher_6222: formData.comment_Teacher_6222,
@@ -619,84 +906,50 @@ function Fill_obe5() {
         }
     }
 
-    useEffect(() => {
-        const cookies = document.cookie.split(';').map(cookie => cookie.trim().split('='));
-        const showDataCookie = cookies.find(([name]) => name === 'showData');
-        const formDataOBE3Cookie = cookies.find(([name]) => name === 'formDataOBE3');
-        const CloFromDataCookie = cookies.find(([name]) => name === 'CloFromData');
-        const InstructorsCookie = cookies.find(([name]) => name === 'Instructors');
-
-        if (showDataCookie && showDataCookie[1]) {
-            try {
-                const showData = JSON.parse(decodeURIComponent(showDataCookie[1]));
-                setFormData(prevFormData => ({
-                    ...prevFormData,
-                    ...showData
-                }));
-            } catch (error) {
-                console.error('Error Parsing ShowData Cookie:', error);
-            }
-        }
-
-        if (formDataOBE3Cookie && formDataOBE3Cookie[1]) {
-            try {
-                const formDataOBE3 = JSON.parse(decodeURIComponent(formDataOBE3Cookie[1]));
-                setFormData(prevFormData => ({
-                    ...prevFormData,
-                    ...formDataOBE3
-                }));
-            } catch (error) {
-                console.error('Error Parsing FormData OBE 3 Cookie:', error);
-            }
-        }
-
-        if (CloFromDataCookie && CloFromDataCookie[1]) {
-            try {
-                const CloFromData = JSON.parse(decodeURIComponent(CloFromDataCookie[1]));
-                setCLOs(CloFromData);
-            } catch (error) {
-                console.error('Error Parsing CLOs FromData Cookie:', error);
-            }
-        }
-
-        if (InstructorsCookie && InstructorsCookie[1]) {
-            try {
-                const instructors = JSON.parse(decodeURIComponent(InstructorsCookie[1]));
-                setInstructors(instructors);
-            } catch (error) {
-                console.error('Error Parsing Instructors Cookie:', error);
-            }
-        }
-
-    }, []);
+    const [OBE5Ids, setOBE5Ids] = useState(null);
 
     const handleSaveData = async (e) => {
         e.preventDefault();
 
+        const userConfirmed = window.confirm('โปรดตรวจสอบข้อมูลก่อนบันทึก! คุณต้องการบันทึกข้อมูลต่อหรือไม่?');
+
+        if (!userConfirmed) {
+            return;
+        }
+
         const obe5_Id = await handleSaveOBE5()
 
         if (obe5_Id) {
-            console.log('Successfull Saved OBE 5 obe5_Id:', obe5_Id);
+            console.log('Successfull Saved OBE 5:', obe5_Id);
+            setOBE5Ids(obe5_Id);
 
-            await handleSaveSupport();
-            await handleSaveROL();
-            await handleSaveFormative();
-            await handleSaveSummative();
-            await handleSaveEvalplan();
+            await handleSaveSupport(obe5_Id);
+            await handleSaveROL(obe5_Id);
+            await handleSaveFormative(obe5_Id);
+            await handleSaveSummative(obe5_Id);
+            await handleSaveImg(obe5_Id);
+            await handleSaveEvalplan(obe5_Id);
         } else {
             console.error('Error Saving All Data Document');
         }
     };
 
     /* Function Download PDF */
-    const [showPdf, setShowPdf] = useState(false);
+    const RenderPDF = async (e) => {
+        e.preventDefault();
 
-    const RenderPDF = () => (
-        <PDFDownloadLink document={
+        const selectedInstructorNames = instructors
+
+            .map(inst => `${inst.user_FirstName} ${inst.user_LastName}`)
+            .filter(name => name !== null && name !== '');
+
+        console.log('Instructors:', selectedInstructorNames);
+
+        const doc = (
             <MyDocument5
                 formData={formData}
                 DataBoxValue={DataBoxValue}
-                Instructors={Instructors}
+                selectedInstructorNames={selectedInstructorNames}
                 Support={Support}
                 CLOs={CLOs}
                 effectives={effectives}
@@ -708,17 +961,35 @@ function Fill_obe5() {
                 imgFile={imgFile}
                 discrepancy={discrepancy}
             />
-        } fileName="Document OBE 5.pdf">
-            {({ blob, url, loading, error }) => (loading ? 'Loading Document...' : <button className="button-download" type="button"> Download </button>)}
-        </PDFDownloadLink>
-    );
+        );
 
-    const handleDownloadPDF = async (e) => {
-        e.preventDefault();
+        const blob = await pdf(doc).toBlob();
 
-        setShowPdf(true);
-        RenderPDF();
-    }
+        const Data = new FormData();
+        const fileSize = blob.size;
+        const fileName = `${formData.courseNamecode}.pdf`;
+
+        Data.append('pdfFile', blob, fileName);
+        Data.append('fileSize', fileSize);
+        Data.append('fileName', fileName);
+        Data.append('obe5Id', OBE5Ids)
+
+        const response = await fetch(`http://localhost:8081/api/pdf5`, {
+            method: 'POST',
+            body: Data
+        });
+
+        if (response.status === 200) {
+            console.log('PDF Outcome-Based Education5 Uploaded on Database Successful');
+        } else {
+            console.error('Failed to Upload PDF Outcome-Based Education 5');
+        }
+
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        link.click();
+    };
 
     return (
         <>
@@ -733,6 +1004,52 @@ function Fill_obe5() {
 
                         <div className="name-head-obe5">
                             <b> <p> รายงานผลการดำเนินการของรายวิชา </p> </b>
+                        </div>
+
+                        {/* Select Course OBE 3 From User */}
+                        <div className="select-subject-obe3">
+                            <label className="select-course-head"> * เลือกวิชาและผู้ใช้งาน เพื่อดึงข้อมูลจาก Outcome-Based Education 3 * </label>
+
+                            <div className="select-course-container">
+                                <select className="select-course-obe3" value={selectedCourseId} onChange={(e) => setSelectedCourseId(e.target.value)}>
+                                    <option value=""> Select Course </option>
+                                    {Array.isArray(courseId) && courseId.map((course) => (
+                                        <option key={course.course_Id} value={course.course_Id}>
+                                            {course.course_Code} - {course.course_Name}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                <select className="select-user-obe3" value={selectedUserId} onChange={(e) => setSelectedUserId(e.target.value)}>
+                                    <option value="">Select User</option>
+                                    {availableUserIds.map((user) => (
+                                        <option key={user.user_Id} value={user.user_Id}>
+                                            {user.user_Id} - {user.user_FirstName} - {user.user_LastName}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Pull Data OBE 5 */}
+                        <div className="from-group">
+                            <label className="select-course-head"> * เลือกปีในกรณีมีข้อมูล Outcome-Based Education 5 * </label>
+
+                            <div className="input-group">
+                                <select
+                                    id="yearselect"
+                                    value={selectyearobe5}
+                                    onChange={(e) => setselectyearobe5(e.target.value)}
+                                >
+                                    <option value=""> Select Year </option>
+                                    {yearobe5.map((item) => (
+                                        <option key={item.year} value={item.year}>
+                                            {item.year}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button className="btn-search" onClick={handleSearch}> Search OBE 5 </button>
+                            </div>
                         </div>
 
                         <form>
@@ -856,20 +1173,20 @@ function Fill_obe5() {
                                         /> <br />
 
                                         <label className="form-name2-obe5"> อาจารย์ผู้สอน </label>
-                                        <button className="teacher-5-add" type="button" onClick={handleAddInstructor}> + </button>
-                                        {Instructors.map((inst, index) => (
+                                        <button className="add-button-obe5" onClick={handleAddInstructor}> <FontAwesomeIcon icon={faPlus} /> </button>
+                                        {instructors.map((inst, index) => (
                                             <div key={index}>
                                                 <input
                                                     className="from2-obe5"
                                                     name="course_Instructor"
                                                     type="text"
-                                                    value={inst.name}
+                                                    value={`${inst.user_FirstName || ''} ${inst.user_LastName || ''}`}
                                                     onChange={(e) => handleInstructorChange(index, e.target.value)}
                                                     placeholder="ชื่ออาจารย์ผู้สอน"
                                                     required
                                                 />
-                                                {Instructors.length > 1 && (
-                                                    <button className="teacher-5-delete" type="button" onClick={() => handleDeleteInstructor(index)}> - </button>
+                                                {instructors.length > 1 && (
+                                                    <button className="delete-button-obe5" onClick={() => handleDeleteInstructor(index)}> <FontAwesomeIcon icon={faMinus} /> </button>
                                                 )}
                                             </div>
                                         ))}
@@ -1019,7 +1336,7 @@ function Fill_obe5() {
 
                                     <div className="description">
                                         <label className="from-modes"> <b> 3. จัดสิ่งสนับสนุนเพื่อประสิทธิผลในการเรียนรู้ของนักศึกษา </b> </label>
-                                        <button className="support-add" type="button" onClick={handleAddSupport}> + </button>
+                                        <button className="add-support-obe5" onClick={handleAddSupport}> <FontAwesomeIcon icon={faPlus} /> </button>
                                         <table className="table-support">
                                             <thead>
                                                 <tr>
@@ -1071,7 +1388,7 @@ function Fill_obe5() {
                                                                 onChange={(e) => handleSupportChange(index, 'support_Improvement', e.target.value)}
                                                             />
                                                         </td>
-                                                        <button className="support-delete" type="button" onClick={() => handleDeleteSupport(index)}> - </button>
+                                                        <button className="delete-support-obe5" onClick={() => handleDeleteSupport(index)}> <FontAwesomeIcon icon={faMinus} /> </button>
                                                     </tr>
                                                 ))}
                                             </tbody>
@@ -1080,7 +1397,7 @@ function Fill_obe5() {
 
                                     <div className="description">
                                         <label className="from-modes"> <b> 4. ผลลัพธ์การเรียนรู้ของรายวิชา (Course Learning Outcomes: CLOs) : นักศึกษาสามารถ </b> </label>
-                                        <button className="clo-5-add" type="button" onClick={handleAddCLOs}> + </button>
+                                        <button className="add-button-obe5" onClick={handleAddCLOs}> <FontAwesomeIcon icon={faPlus} /> </button>
                                         {CLOs.map((clos, CLOindex) => (
                                             <div key={CLOindex}>
                                                 <input
@@ -1101,7 +1418,7 @@ function Fill_obe5() {
                                                     placeholder="ชื่อ CLOs"
                                                     required
                                                 />
-                                                <button className="clo-5-delete" type="button" onClick={() => handleDeleteCLOs(CLOindex)}> - </button>
+                                                <button className="delete-button-obe5" onClick={() => handleDeleteCLOs(CLOindex)}> <FontAwesomeIcon icon={faMinus} /> </button>
                                             </div>
                                         ))}
                                     </div>
@@ -1431,7 +1748,7 @@ function Fill_obe5() {
 
                                     <div className="description">
                                         <label className="from-modes"> <b> 3. ความคลาดเคลื่อนจากแผนการประเมินที่กำหนดไว้ในรายละเอียดรายวิชาทั้งด้านกำหนดเวลาและวิธีการประเมินผล (ถ้ามี) </b> </label>
-                                        <button className="discrepancy-5-add" type="button" onClick={handleAddDiscrepancy}> + </button>
+                                        <button className="add-button-obe5" onClick={handleAddDiscrepancy}> <FontAwesomeIcon icon={faPlus} /> </button>
                                         <table className="table-discrepancy">
                                             <thead>
                                                 <tr>
@@ -1515,7 +1832,7 @@ function Fill_obe5() {
                                                                 onChange={(event) => handleDiscrepancyChange(index, 'actual_Assessment', event.target.value)}
                                                             />
                                                         </td>
-                                                        <button className="discrepancy-5-delete" type="button" onClick={() => handleDeleteDiscrepancy(index)}> - </button>
+                                                        <button className="delete-button-obe5" onClick={() => handleDeleteDiscrepancy(index)}> <FontAwesomeIcon icon={faMinus} /> </button>
                                                     </tr>
                                                 ))}
                                             </tbody>
@@ -1570,22 +1887,24 @@ function Fill_obe5() {
 
                                     <div className="description">
                                         <label className="from-mode"> 1. ประเด็นด้านทรัพยากรประกอบการเรียนและสิ่งอำนวยความสะดวก (ถ้ามี) </label>
-                                        <input
+                                        <textarea
                                             className="from4-obe5"
                                             name="resourceIssue"
                                             type="text"
                                             value={formData.resourceIssue}
                                             onChange={handleInputChange}
+                                            onInput={(event) => handleResize(event, setDescription1)}
                                         />
                                     </div>
                                     <div className="description">
                                         <label className="from-mode"> 2. ประเด็นด้านการบริหารจัดการ (ถ้ามี) </label>
-                                        <input
+                                        <textarea
                                             className="from4-obe5"
                                             name="administrativeIssues"
                                             type="text"
                                             value={formData.administrativeIssues}
                                             onChange={handleInputChange}
+                                            onInput={(event) => handleResize(event, setDescription2)}
                                         />
                                     </div>
                                 </div>
@@ -1597,42 +1916,46 @@ function Fill_obe5() {
                                     <div className="description">
                                         <label className="from-mode"> <b> 1. ผลการประเมินรายวิชาโดยนักศึกษา (แนบเอกสาร) </b> </label>
                                         <label className="from-obe5-small-name"> 1.1 ข้อวิพากษ์ที่สำคัญจากผลการประเมินโดยนักศึกษา </label>
-                                        <input
+                                        <textarea
                                             className="from-obe5-small"
                                             name="evaluation_Students"
                                             type="text"
                                             value={formData.evaluation_Students}
                                             onChange={handleInputChange}
+                                            onInput={(event) => handleResize(event, setDescription3)}
                                         />
 
                                         <label className="from-obe5-small-name"> 1.2 ความเห็นของอาจารย์ผู้สอนต่อข้อวิพากษ์ตามข้อ 1.1 </label>
-                                        <input
+                                        <textarea
                                             className="from-obe5-small"
                                             name="evaluation_Teacher"
                                             type="text"
                                             value={formData.evaluation_Teacher}
                                             onChange={handleInputChange}
+                                            onInput={(event) => handleResize(event, setDescription4)}
                                         />
                                     </div>
 
                                     <div className="description">
                                         <label className="from-mode"> <b> 2. ผลการประเมินรายวิชาโดยวิธีอื่น </b> </label>
                                         <label className="from-obe5-small-name"> 2.1 ข้อวิพากษ์ที่สำคัญจากผลการประเมินโดยวิธีอื่น </label>
-                                        <input
+                                        <textarea
                                             className="from-obe5-small"
                                             name="evaluation_Other"
                                             type="text"
                                             value={formData.evaluation_Other}
                                             onChange={handleInputChange}
+                                            onInput={(event) => handleResize(event, setDescription5)}
                                         />
 
                                         <label className="from-obe5-small-name"> 2.2 ความเห็นของอาจารย์ผู้สอนต่อข้อวิพากษ์ตามข้อ 2.1 </label>
-                                        <input
+                                        <textarea
                                             className="from-obe5-small"
                                             name="comment_Teacher_6222"
                                             type="text"
                                             value={formData.comment_Teacher_6222}
                                             onChange={handleInputChange}
+                                            onInput={(event) => handleResize(event, setDescription6)}
                                         />
                                     </div>
                                 </div>
@@ -1643,23 +1966,25 @@ function Fill_obe5() {
 
                                     <div className="description">
                                         <label className="from-mode"> <b> 1. การดำเนินการเพื่อการปรับปรุงการเรียนการสอน/รายวิชา (นอกเหนือจากที่ระบุไว้ในหมวดที่ 2) </b> </label>
-                                        <input
+                                        <textarea
                                             className="from4-obe5"
                                             name="improveTeaching7_1"
                                             type="text"
                                             value={formData.improveTeaching7_1}
                                             onChange={handleInputChange}
+                                            onInput={(event) => handleResize(event, setDescription7)}
                                         />
                                     </div>
 
                                     <div className="description">
                                         <label className="from-mode"> <b> 2. ข้อเสนอแนะของอาจารย์ผู้รับผิดชอบรายวิชาต่ออาจารย์ผู้รับผิดชอบหลักสูตร </b> </label>
-                                        <input
+                                        <textarea
                                             className="from4-obe5"
                                             name="recomment7_2"
                                             type="text"
                                             value={formData.recomment7_2}
                                             onChange={handleInputChange}
+                                            onInput={(event) => handleResize(event, setDescription8)}
                                         />
                                     </div>
                                 </div>
@@ -1673,8 +1998,7 @@ function Fill_obe5() {
                             <button className="button-save-obe5" type="button" onClick={handleSaveData}> Save </button>
 
                             {/* Download OBE 5 */}
-                            <button className="button-download-obe5" type="button" onClick={handleDownloadPDF}> PDF </button>
-                            {showPdf && (<RenderPDF />)}
+                            <button className="button-download-obe5" type="button" onClick={RenderPDF}> Download </button>
                         </div>
 
                     </div>

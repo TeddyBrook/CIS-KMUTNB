@@ -13,7 +13,8 @@
 }
 
 .menu-container {
-    padding: 10px;
+    width: 20%;
+    padding: 5px;
     border-radius: 10px;
     background-color: #7d0f3f;
 }
@@ -25,8 +26,6 @@
 }
 
 .btn-menu-select {
-    width: auto;
-    height: auto;
     border: none;
     outline: none;
     color: #7d0f3f;
@@ -45,7 +44,7 @@
     width: auto;
     display: block;
     padding: 1rem;
-    margin-left: 8%;
+    margin-left: 14%;
     border-radius: 20px;
     background-color: #7d0f3f;
 }
@@ -54,6 +53,7 @@
     font-size: 16px;
     margin-bottom: 20px;
     text-align: center;
+    font-weight: bold;
 }
 
 .descriptions {
@@ -65,11 +65,53 @@
 }
 
 .input-form {
+    width: calc(100% - 20px);
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    outline: none;
+    display: block;
+    text-align: left;
+    border: 1px solid #ccc;
+}
+
+.input-description {
     width: 100%;
+    height: 50px;
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 10px;
     outline: none;
+    resize: none;
+    overflow-y: hidden;
+    display: block;
+    text-align: left;
+    border: 1px solid #ccc;
+}
+
+.input-elo {
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    outline: none;
+    resize: none;
+    overflow-y: hidden;
+    display: block;
+    text-align: left;
+    border: 1px solid #ccc;
+}
+
+.input-basic {
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    outline: none;
+    resize: none;
+    overflow-y: hidden;
     display: block;
     text-align: left;
     border: 1px solid #ccc;
@@ -82,6 +124,115 @@
     display: block;
     color: #7d0f3f;
     background-color: #ffffff;
+}
+
+.selected-course {
+    margin: 0px 0px 15px 10px;
+    padding: 2px 5px;
+    color: #730b3a;
+    min-width: 15em;
+    position: relative;
+    cursor: pointer;
+    width: auto;
+    max-width: 1500px;
+    font-size: 14px;
+    border-radius: 8px;
+    border-color: #6e103b;
+    border-width: 2px;
+}
+
+.selected-course option {
+    background-color: #67183c;
+    color: #ffffff;
+}
+
+.selected-course:hover {
+    background-color: rgba(57, 37, 149, 0.945);
+    border-color: #999999;
+    color: #ffffff;
+}
+
+.selected-instructor {
+    margin: 5px 5px 15px 10px;
+    padding: 2px 5px;
+    color: #730b3a;
+    min-width: 15em;
+    position: relative;
+    cursor: pointer;
+    width: auto;
+    max-width: 1500px;
+    font-size: 14px;
+    border-radius: 8px;
+    border-color: #6e103b;
+    border-width: 2px;
+}
+
+.selected-instructor option {
+    background-color: #67183c;
+    color: #ffffff;
+}
+
+.btn-add {
+    color: #ffffff;
+    background-color: #67183c;
+    border-radius: 9999px;
+    margin-left: 15px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-add:hover {
+    color: #67183c;
+    border-color: #67183c;
+    background-color: #ffffff;
+}
+
+.btn-delete {
+    color: #ffffff;
+    background-color: #67183c;
+    border-radius: 9999px;
+    margin-left: 15px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-delete:hover {
+    color: #67183c;
+    border-color: #67183c;
+    background-color: #ffffff;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+}
+
+.container-role {
+    display: inline;
+    align-items: center;
+}
+
+.select-role {
+    padding: 10px;
+}
+
+.select-form {
+    margin: 5px 0px 5px 0px;
+    width: 35%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fff;
+    color: #730b3a;
+}
+
+.select-form:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.select-form:disabled {
+    background-color: #f5f5f5;
+    color: #aaa;
 }
 
 .save {
@@ -101,24 +252,84 @@
     transform: translateY(4px);
 }
 
-.save-experience {
+.update {
     margin-top: 10px;
-    margin-bottom: 20px;
+    margin-left: 10px;
     padding: 10px 21px;
     border-radius: 10px;
+    color: white;
     display: inline-block;
     text-decoration: none;
-    color: white;
     border: 1px solid #6e103b;
     background-color: #7d0f3f;
     text-shadow: 0px 1px 0px #730b3a;
 }
 
-.save-experience:active {
+.update:active {
     box-shadow: 0 3px #ccc;
     transform: translateY(4px);
 }
 
 button[type="button"]:hover {
     background-color: #804760;
+}
+
+/* Button Save */
+.save-edit {
+    background-color: #4CAF50;
+    color: white;
+    border: 2px solid transparent;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.3s, transform 0.3s, border-color 0.3s;
+}
+
+.save-edit:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+    border-color: #388e3c;
+}
+
+/* Button Cancel */
+.cancel-edit {
+    background-color: #f44336;
+    color: white;
+    border: 2px solid transparent;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.3s, transform 0.3s, border-color 0.3s;
+}
+
+.cancel:hover {
+    background-color: #e53935;
+    transform: scale(1.05);
+    border-color: #c62828;
+}
+
+/* Button Edit */
+.click-edit {
+    background-color: #008CBA;
+    color: white;
+    border: 2px solid transparent;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.3s, transform 0.3s, border-color 0.3s;
+}
+
+.click-edit:hover {
+    background-color: #007bb5;
+    transform: scale(1.05);
+    border-color: #005f73;
 }

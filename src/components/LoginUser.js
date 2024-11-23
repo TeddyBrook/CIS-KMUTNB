@@ -34,6 +34,7 @@ function LoginUser() {
                 console.log(user);
 
                 if (user && user.role_Name === 'Course Instructor' || user.role_Name === 'Subject Instructor') {
+                    localStorage.setItem('token', token);
                     setAuth(user, token);
                     setInputs({ user_Name: '', passwords: '', });
                     navigate('/')
@@ -41,8 +42,7 @@ function LoginUser() {
                     console.error('Only Non-Admin Users are Allowed to Login Here');
                 }
             } else {
-                const errorResponse = await response.json();
-                console.error("Error:", errorResponse.message);
+                console.error("Invalid Response from Server");
                 alert("Invalid username or password. Please try again.");
             }
         } catch (error) {

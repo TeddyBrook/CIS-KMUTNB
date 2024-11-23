@@ -42,6 +42,53 @@
     text-align: center;
 }
 
+/* Select Course OBE 3 From User*/
+
+.select-subject-obe3 {
+    display: block;
+}
+
+.select-course-head {
+    color: #8B0000;
+    text-align: center;
+    font-weight: bold;
+    line-height: 30px;
+    display: block;
+}
+
+.select-course-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.select-course-obe3 {
+    padding: 5px 15px;
+    border-radius: 10px;
+    color: black;
+    outline: none;
+    display: inline-block;
+    text-decoration: none;
+    border: 1px solid #6e103b;
+    background-color: #ffffff;
+    margin-bottom: 10px;
+    margin-right: 20px;
+    text-shadow: 0px 1px 0px #730b3a;
+}
+
+.select-user-obe3 {
+    padding: 5px 15px;
+    border-radius: 10px;
+    color: black;
+    outline: none;
+    display: inline-block;
+    text-decoration: none;
+    border: 1px solid #6e103b;
+    background-color: #ffffff;
+    margin-bottom: 10px;
+    text-shadow: 0px 1px 0px #730b3a;
+}
+
 /* input-container-obe5 */
 
 .from-title-obe5 {
@@ -181,27 +228,33 @@
     border: 1px solid #ccc;
 }
 
-.teacher-5-add {
-    width: 25px;
-    height: 25px;
-    margin-left: 20px;
-    border-radius: 9999px;
+.add-button-obe5 {
+    cursor: pointer;
+    font-size: 20px;
+    color: #6e103b;
+    margin: 0px 10px 3px 3px;
+    vertical-align: middle;
+    outline: none;
     border: none;
-    color: white;
-    text-align: center;
-    background-color: #7D0f3f;
+    background: transparent;
 }
 
-.teacher-5-delete {
-    width: 25px;
-    height: 25px;
-    margin-left: 20px;
-    border-radius: 9999px;
+.add-button-obe5:hover {
+    color: #007bff;
+}
+
+.delete-button-obe5 {
+    cursor: pointer;
+    color: #6e103b;
+    margin: 0px 10px 3px 3px;
+    vertical-align: middle;
+    outline: none;
     border: none;
-    color: white;
-    text-align: center;
-    align-items: center;
-    background-color: #7D0f3f;
+    background: transparent;
+}
+
+.delete-button-obe5:hover {
+    color: #007bff;
 }
 
 .form-name3-obe5 {
@@ -239,9 +292,11 @@
     margin-top: 1%;
     margin-left: 50px;
     border-radius: 10px;
+    resize: none;
     outline: none;
+    overflow-y: hidden;
     display: inline;
-    text-align: center;
+    text-align: left;
     border: 1px solid #ccc;
 }
 
@@ -317,31 +372,37 @@
     border: none;
     resize: none;
     outline: none;
+    overflow-y: hidden;
     text-align: left;
 }
 
-.support-add {
-    width: 25px;
-    height: 25px;
-    margin-top: 1%;
-    margin-left: 20px;
-    border-radius: 9999px;
+.add-support-obe5 {
+    cursor: pointer;
+    font-size: 20px;
+    color: #6e103b;
+    margin: 0px 10px 3px 3px;
+    vertical-align: middle;
+    outline: none;
     border: none;
-    color: white;
-    text-align: center;
-    background-color: #7D0f3f;
+    background: transparent;
 }
 
-.support-delete {
-    width: 25px;
-    height: 25px;
-    margin-top: 30px;
-    margin-left: 20px;
-    border-radius: 9999px;
+.add-support-obe5:hover {
+    color: #007bff;
+}
+
+.delete-support-obe5 {
+    cursor: pointer;
+    color: #6e103b;
+    margin: 38px 10px 3px 3px;
+    vertical-align: middle;
+    outline: none;
     border: none;
-    color: white;
-    text-align: center;
-    background-color: #7D0f3f;
+    background: transparent;
+}
+
+.delete-support-obe5:hover {
+    color: #007bff;
 }
 
 .from-clo-obe5 {
@@ -366,28 +427,6 @@
     display: inline;
     text-align: left;
     border: 1px solid #ccc;
-}
-
-.clo-5-add {
-    width: 25px;
-    height: 25px;
-    margin-left: 20px;
-    border-radius: 9999px;
-    border: none;
-    color: white;
-    text-align: center;
-    background-color: #7D0f3f;
-}
-
-.clo-5-delete {
-    width: 25px;
-    height: 25px;
-    margin-left: 20px;
-    border-radius: 9999px;
-    border: none;
-    color: white;
-    text-align: center;
-    background-color: #7D0f3f;
 }
 
 .from-mode-obe5 {
@@ -448,6 +487,7 @@
     border: none;
     resize: none;
     outline: none;
+    overflow-y: hidden;
     text-align: left;
 }
 
@@ -529,7 +569,7 @@
 .from-guideline {
     border: none;
     outline: none;
-    text-align: center;
+    text-align: left;
 }
 
 .label-name {
@@ -686,28 +726,6 @@
     text-align: center;
 }
 
-.discrepancy-5-add {
-    width: 25px;
-    height: 25px;
-    margin-left: 5px;
-    border-radius: 9999px;
-    border: none;
-    color: white;
-    text-align: center;
-    background-color: #7D0f3f;
-}
-
-.discrepancy-5-delete {
-    width: 25px;
-    height: 25px;
-    margin-left: 20px;
-    border-radius: 9999px;
-    border: none;
-    color: white;
-    text-align: center;
-    background-color: #7D0f3f;
-}
-
 .other-obe5 {
     color: red;
     display: inline;
@@ -752,9 +770,11 @@
     margin-top: 1%;
     margin-left: 70px;
     border-radius: 10px;
+    resize: none;
     outline: none;
+    overflow-y: hidden;
     display: inline;
-    text-align: center;
+    text-align: left;
     border: 1px solid #ccc;
 }
 

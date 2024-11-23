@@ -1,7 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faEdit, faSignOutAlt, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 
 /* img */
 import CIS from '../img/CIS.png';
@@ -42,30 +44,32 @@ function Menu() {
         navigate('/');
     }
 
-    const handleUserActionChange = (event) => {
-        const selectedAction = event.target.value;
+    const [key, setKey] = useState(0);
 
-        switch (selectedAction) {
-            case 'editProfile':
-                handleEditProfileClick();
-                break;
-            case 'editAdmin':
-                handleEditAdminClick();
-                break;
-            case 'logout':
-                handleWhenLogoutClick();
-                break;
-            default:
-                break;
-        }
-    }
+    const text = "OBE Document Management System for Department of Computer and Information Science";
+
+    useEffect(() => {
+        const totalDuration = text.length * 150;
+
+        const timer = setTimeout(() => {
+            setKey(prevKey => prevKey + 1);
+        }, totalDuration);
+
+        return () => clearTimeout(timer);
+    }, [key, text]);
 
     return (
         <>
             <div className="Header">
 
                 <div className="Header-Main">
-                    <p> OBE Document Management System for Department of Computer and Information Science </p>
+                    <p className="Animated-text">
+                        {text.split("").map((char, index) => (
+                            <span key={`${key}-${index}`} className="Animated-char" style={{ animationDelay: `${index * 0.1}s` }}>
+                                {char === ' ' ? '\u00A0' : char}
+                            </span>
+                        ))}
+                    </p>
                 </div>
 
                 <div className="Container">
@@ -111,19 +115,30 @@ function Menu() {
                         {user ? (
                             <>
                                 <div className="dropdown">
-                                    <button className="dropbtn"> {user.user_Name} </button>
+                                    <button className="dropbtn"> <FontAwesomeIcon icon={faUser} className="icon" /> {user.user_Name} </button>
+
                                     <div className="dropdown-content">
-                                        <button className="edit-btn" onClick={handleEditProfileClick}> Edit Profile </button>
                                         {user.role_Name === 'Admin' && (
-                                            <button className="edit-btn" onClick={handleEditAdminClick}> Edit Admin </button>
+                                            <button className="edit-btn" onClick={handleEditAdminClick}>
+                                                <FontAwesomeIcon icon={faEdit} className="icon" /> Edit
+                                            </button>
                                         )}
-                                        <button className="logout-btn" onClick={handleWhenLogoutClick}> Logout </button>
+                                        {(user.role_Name === 'Course Instructor' || user.role_Name === 'Subject Instructor') && (
+                                            <button className='edit-btn' onClick={handleEditProfileClick}>
+                                                <FontAwesomeIcon icon={faEdit} className='icon' /> Edit
+                                            </button>
+                                        )}
+                                        <button className="logout-btn" onClick={handleWhenLogoutClick}>
+                                            <FontAwesomeIcon icon={faSignOutAlt} className="icon" /> Logout
+                                        </button>
                                     </div>
                                 </div>
                             </>
                         ) : (
                             <NavLink to="/Login">
-                                <button className="Login-btn" type="button"> เข้าสู่ระบบ </button>
+                                <button className="Login-btn">
+                                    <FontAwesomeIcon icon={faSignInAlt} className="icon" /> Login
+                                </button>
                             </NavLink>
                         )}
                     </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import { pdf } from "@react-pdf/renderer";
 
 /* CSS */
 import Fill7 from '../style/Fill7.css';
@@ -39,9 +39,9 @@ function Fill_obe7() {
 
         /* Mode 5 */
         people: '',
-        obe_75201Other_Dscript: '',
+        people_description: '',
         people_other: '',
-        obe_75301Other_Dscript: '',
+        peopleother_description: '',
 
         /* Mode 6 */
         obe_76201_Dscript: '',
@@ -169,34 +169,53 @@ function Fill_obe7() {
         setQualifications(newQuali);
     }
 
+    const handleSaveQualification = async (obe7_Id) => {
+        try {
+            const quali = qualifications.map((qua, index) => {
+
+                const qualifi = {
+                    indicators: qua.indicators,
+                    performance: qua.performance,
+                    explanation: qua.explanation,
+                    obe7_Id: obe7_Id,
+                    user_Id: user.user_Id,
+                }
+
+                console.log(`Sending Data for Qualification Index ${index}:`, qualifi);
+                return axios.post('http://localhost:8081/api/quailifications', qualifi);
+            })
+
+            const responses = await Promise.all(quali);
+
+            responses.forEach((response, index) => {
+                if (response.status === 200) {
+                    console.log(`Saving Data quailification for outcome_based_education ${index} Complete`);
+                } else {
+                    console.error(`Failed to Save quailification for outcome_based_education ${index}: `, response.statusText);
+                }
+            });
+        } catch (error) {
+            console.error('Error Saving Data');
+        }
+    }
+
     const ELOsToggleText = (e) => {
+
         const { name, value, type, checked } = e.target;
 
-        if (type === "checkbox" && name === "elos_Achieved") {
-            if (value === "ELOs ไม่บรรลุครบทุกตัว") {
-                setFormData(prevState => ({
-                    ...prevState,
-                    elos_Achieved: checked ? value + " " + prevState.elo_NtArchive_Dscript : " "
-                }));
-            } else {
-                setFormData(prevState => ({
-                    ...prevState,
-                    elos_Achieved: checked ? value : " "
-                }));
-            }
-        } else if (name === "elo_NtArchive_Dscript") {
-            setFormData(prevState => ({
+        if (name === "elos_Achieved") {
+            setFormData((prevState) => ({
                 ...prevState,
-                [name]: value,
-                elos_Achieved: prevState.elos_Achieved.includes("ELOs ไม่บรรลุครบทุกตัว") ? "ELOs ไม่บรรลุครบทุกตัว" + value : prevState.elos_Achieved
+                elos_Achieved: checked ? value : "",
+                elo_NtArchive_Dscript: value === "ELOs ไม่บรรลุครบทุกตัว" ? "" : prevState.elo_NtArchive_Dscript
             }));
-        } else {
-            setFormData(prevState => ({
+        } else if (name === "elo_NtArchive_Dscript") {
+            setFormData((prevState) => ({
                 ...prevState,
-                [name]: value
+                elo_NtArchive_Dscript: value
             }));
         }
-    };
+    }
 
     useEffect(() => {
         const setCurrentData = () => {
@@ -218,11 +237,6 @@ function Fill_obe7() {
         setCurrentData();
     }, []);
 
-    const Check = (e) => {
-        e.preventDefault();
-        console.log('Value:', formData.elos_Achieved)
-    }
-
     const [curriculum, setCurriculum] = useState({
         college: '',
         campus: '',
@@ -239,30 +253,120 @@ function Fill_obe7() {
         }));
     };
 
-    useEffect(() => { fetchCurriculum(); }, []);
+    const [yearobe7, setYearobe7] = useState([]);
+    const [selectyearobe7, setselectyearobe7] = useState([]);
+
+    useEffect(() => {
+        const fetchyearobe7 = async () => {
+            try {
+                const response = await axios.get('http://localhost:8081/api/yearobe7');
+                setYearobe7(response.data.results);
+            } catch (error) {
+                console.error('Error fetching years:', error);
+            }
+        };
+        fetchyearobe7();
+    }, [])
+
+    const [usersInObe7, setUsersInObe7] = useState([]);
+    const [selectedUserId, setSelectedUserId] = useState('');
+
+    useEffect(() => {
+        const fetchUsersInObe7 = async () => {
+            try {
+                const response = await axios.get('http://localhost:8081/api/usersInObe7');
+                setUsersInObe7(response.data.results);
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        };
+
+        fetchUsersInObe7();
+    }, []);
+
+    const [obeData, setObeData] = useState(null);
+    const [obe7Ids, setObe7Ids] = useState('');
+
+    const fetchobe7 = async () => {
+        if (!selectedUserId || !selectyearobe7) {
+            console.log('id and year are missing');
+            return;
+        }
+
+        try {
+            const response = await axios.get('http://localhost:8081/api/dataobe7', {
+                params: {
+                    user_Id: selectedUserId,
+                    year: selectyearobe7
+                }
+            });
+            console.log('Response:', response);
+            const data = response.data.results && response.data.results[0];
+
+            if (data) {
+                setObeData(data);
+                setObe7Ids(data.obe7_Id);
+                alert('ดึงข้อมูลมาเรียบร้อย');
+            } else {
+                alert("No Data Found.");
+            }
+        } catch (error) {
+            console.error('Error fetching OBE data:', error);
+        }
+    }
+
+    const handleSearch = () => {
+        if (selectedUserId && selectyearobe7) {
+            console.log('Selected User ID:', selectedUserId);
+            console.log('Selected Year:', selectyearobe7);
+            fetchobe7();
+        } else {
+            alert('Please select year and user');
+        }
+    }
+
+    useEffect(() => {
+        if (obeData) {
+
+            const obeinfo = obeData;
+
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                analysis_DataStudent: obeinfo.analysisDataStudent,
+                elos_Achieved: obeinfo.ELo_Archive_bl,
+                obe_Dscript_74201: obeinfo.obe_description74201,
+                obe_Dscript_74301: obeinfo.obe_description74301,
+                obe_76201_Dscript: obeinfo.obe_76201_description,
+                obe_77201_Dscript: obeinfo.obe_77201_description,
+                obe_77202_Dscript: obeinfo.obe_77202_description,
+                obe_77203_Dscript: obeinfo.obe_77203_description,
+            }));
+        }
+    }, [obeData])
 
     const fetchCurriculum = async () => {
         try {
-            const response = await axios.get('http://localhost:8081/api/curriculumData');
+            const response = await axios.get('http://localhost:8081/api/university');
             const data = response.data;
 
-            if (data && data.length > 0) {
-                const curriculumData = data[0]; /* ดึงข้อมูลจากออบเจ็กต์แรกในอาร์เรย์ */
+            if (Array.isArray(data) && data.length > 0) {
                 setCurriculum({
-                    college: curriculumData.college || '',
-                    campus: curriculumData.campus || '',
-                    faculty: curriculumData.faculty || '',
-                    department_Name: curriculumData.department_Name || '',
-                    curriculum: curriculumData.curriculum_Name || '',
-                    branch: curriculumData.branch || '',
+                    college: data[0].college || '',
+                    campus: data[0].campus || '',
+                    faculty: data[0].faculty || '',
+                    department_Name: data[0].department_Name || '',
+                    curriculum: data[0].curriculum_Name || '',
+                    branch: data[0].branch || '',
                 });
-            } else {
-                console.error('No Data Available to Display');
             }
         } catch (error) {
             console.error('Error Fetching Data', error);
         }
     };
+
+    useEffect(() => {
+        fetchCurriculum();
+    }, []);
 
     const AdjustInputSize = (e) => {
         e.target.style.width = ((e.target.value.length + 1) * 8) + 'px';
@@ -278,14 +382,15 @@ function Fill_obe7() {
     const [instructor, setInstructor] = useState([]);
     const [qualification, setQualification] = useState([]);
     const [positions, setPositions] = useState([]);
+    const [instructorData, setInstructorData] = useState([]);
 
     useEffect(() => {
         axios.get('http://localhost:8081/api/courseInstructors')
             .then(response => {
+
+                setInstructorData(response.data);
                 console.log('Fetched Data:', response.data);
                 setInstructor(response.data.map(item => `${item.user_FirstName} ${item.user_LastName}`));
-                setQualification(response.data.map(item => item.qualification));
-                setPositions(response.data.map(item => item.positions));
             })
             .catch(error => {
                 console.error('Error Fetching Instructor Data:', error);
@@ -309,16 +414,35 @@ function Fill_obe7() {
         const updateCurriculumTeacher = [...curriculum_Teacher];
 
         updateCurriculumTeacher[index][name] = value;
+
+        if (name === 'instructor') {
+            const selectedInstructor = instructorData.find(
+                (teacher) => `${teacher.user_FirstName} ${teacher.user_LastName}` === value
+            );
+
+            if (selectedInstructor) {
+                updateCurriculumTeacher[index].qualificationOptions = [selectedInstructor.qualification];
+                updateCurriculumTeacher[index].positionsOptions = [selectedInstructor.positions];
+                updateCurriculumTeacher[index].qualification = selectedInstructor.qualification; // Set default qualification value
+                updateCurriculumTeacher[index].positions = selectedInstructor.positions; // Set default position value
+            } else {
+                updateCurriculumTeacher[index].qualificationOptions = [];
+                updateCurriculumTeacher[index].positionsOptions = [];
+                updateCurriculumTeacher[index].qualification = '';
+                updateCurriculumTeacher[index].positions = '';
+            }
+        }
         setCurriculumTeacher(updateCurriculumTeacher);
     };
 
     const handleSaveCurriculumTeacher = async (obe7_Id) => {
         try {
             const curriTeacher = curriculum_Teacher.map((cur, index) => {
+
                 const curT = {
                     instructor: cur.instructor,
                     qualification: cur.qualification,
-                    position: cur.positions,
+                    positions: cur.positions,
                     obe7_Id: obe7_Id,
                 }
 
@@ -359,9 +483,16 @@ function Fill_obe7() {
     const handleSaveImgOBE7 = async (obe7_Id) => {
         const formDatas = new FormData();
 
-        formDatas.append('obe7_img_analysis', imgFile.obe7_img_analysis);
-        formDatas.append('obe_Dscript_7301', formData.obe_Dscript_7301);
-        formDatas.append('obe7_Id', obe7_Id.obe7_Id);
+        if (!obe7_Id) {
+            console.error('obe7_Id is undefined. Make sure it is passed correctly.');
+            return;
+        }
+
+        const obe_Dscript_7301_Value = formData.obe_Dscript_7301 || null;
+
+        formDatas.append('obe7_img_analysis', imgFile.obe7_img_analysis || "");
+        formDatas.append('obe_Dscript_7301', obe_Dscript_7301_Value);
+        formDatas.append('obe7_Id', obe7_Id);
 
         try {
             const response = await fetch('http://localhost:8081/api/img7', {
@@ -369,13 +500,16 @@ function Fill_obe7() {
                 body: formDatas,
             });
 
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
             const result = await response.json();
-            console.log('File URL:', result.fileUrl);
+            console.log('Response Message:', result.message);
 
         } catch (error) {
             console.error('Error Uploading File:', error);
         }
-    }
+    };
 
     /* Function การวิเคราะห์รายวิชาที่มีผลการเรียนไม่ปกติ */
     const [analysisCourse, setAnalysisCourse] = useState(Array.from({ length: 3 }, () => ({
@@ -424,8 +558,15 @@ function Fill_obe7() {
     };
 
 
-    const [chooseCourse, setChooseCourse] = useState([]);
+    const handleAnalysisChange = (index, event) => {
+        const { name, value } = event.target;
+        const analysisChange = [...analysisCourse];
 
+        analysisChange[index][name] = value;
+        setAnalysisCourse(analysisChange);
+    };
+
+    const [chooseCourse, setChooseCourse] = useState([]);
 
     useEffect(() => {
         axios.get('http://localhost:8081/api/chooseCourse')
@@ -444,29 +585,19 @@ function Fill_obe7() {
             });
     }, []);
 
-    const CheckValue = (e) => {
-        e.preventDefault();
-
-        console.log('Course Data:', analysisCourse.map(an => ({
-            course_Id: an.course_Id,
-            course_Name: an.course_Name,
-            course_Code: an.course_Code,
-        })));
-        // console.log('Course Not Data:', analysisdidnot.map(as => ({ course_Id: as.course_Id, })));
-    };
-
     const handleSaveAnalysisCourse = async (obe7_Id) => {
         try {
             const analysisC = analysisCourse.map((ans, index) => {
-                const anc = {
-                    course_Id: ans.course_Id,
-                    abnormalities: ans.abnormalities,
-                    conducting: ans.conducting,
-                    factoranalysis: ans.factoranalysis,
-                    guideimprovement: ans.guideimprovement,
-                    obe7_Id: obe7_Id,
-                }
 
+                const anc = {
+                    course_Id: ans.course_Id || null,
+                    abnormalities: ans.abnormalities || null,
+                    conducting: ans.conducting || null,
+                    factor_Analysis: ans.factoranalysis || null,
+                    guide_improvement: ans.guideimprovement || null,
+                    obe7_Id: obe7_Id,
+                    user_Id: user.user_Id,
+                }
                 console.log(`Sending Data for Document Analysis Course Index ${index}:`, anc);
                 return axios.post('http://localhost:8081/api/ansCourse', anc);
             })
@@ -527,6 +658,7 @@ function Fill_obe7() {
 
         if (name === 'course_Id') {
             const selectedCourse = JSON.parse(value);
+
             updatedData[index] = {
                 ...updatedData[index],
                 course_Id: selectedCourse.course_Id,
@@ -537,6 +669,7 @@ function Fill_obe7() {
             fetchCLOs(selectedCourse.course_Id);
         } else if (name === 'unfulfilled_Clo') {
             const selectedClo = JSON.parse(value);
+
             updatedData[index] = {
                 ...updatedData[index],
                 unfulfilled_Clo: selectedClo.clo_Id,
@@ -547,6 +680,7 @@ function Fill_obe7() {
             fetchELOs(selectedClo.clo_Id);
         } else if (name === 'elo_Corresponding_Unclo') {
             const selectedElo = JSON.parse(value);
+
             updatedData[index] = {
                 ...updatedData[index],
                 elo_Corresponding_Unclo: selectedElo.elo_Id,
@@ -559,7 +693,6 @@ function Fill_obe7() {
 
         setAnalysisdidnot(updatedData);
     };
-
 
     const [cloMap, setCloMap] = useState({});
 
@@ -589,7 +722,7 @@ function Fill_obe7() {
             console.log('Fetched CLOs for course_Id:', clo_Id, response.data);
             setEloMap(prevState => ({ ...prevState, [clo_Id]: response.data }));
         } catch (error) {
-            console.error('Error Fetching ELOs:', error);
+            console.error('Error Fetching ELO:', error);
         }
     };
 
@@ -601,24 +734,18 @@ function Fill_obe7() {
         });
     }, [analysisdidnot]);
 
-    // const handleCheck = (e) => {
-    //     e.preventDefault();
-
-    //     console.log('Check:', analysisdidnot.map(anl => ({
-    //         unfulfilled_Clo:anl.unfulfilled_Clo,
-    //     })))
-    // }
-
     const handleSaveAnalysisNotCourse = async (obe7_Id) => {
         try {
             const analydid = analysisdidnot.map((dt, index) => {
+
                 const didnot = {
-                    course_Id: dt.course_Id,
-                    clo_Id: dt.unfulfilled_Clo,
-                    elo_Id: dt.elo_Corresponding_Unclo,
-                    reasonclo_NotArchive: dt.reasonclo_NotArchive,
-                    development_GuideStu: dt.development_GuideStu,
+                    course_Id: dt.course_Id || null,
+                    clo_Id: dt.unfulfilled_Clo || null,
+                    elo_Id: dt.elo_Corresponding_Unclo || null,
+                    reasonclo_NotArchive: dt.reasonclo_NotArchive || null,
+                    development_GuideStu: dt.development_GuideStu || null,
                     obe7_Id: obe7_Id,
+                    user_Id: user.user_Id,
                 }
 
                 console.log(`Sending Data for Document Analysis Course Index ${index}:`, didnot);
@@ -679,15 +806,24 @@ function Fill_obe7() {
         });
     };
 
+    const handleCourseNotChange = (index, event) => {
+        const { name, value } = event.target;
+        const NotChange = [...courseNtoffered];
+
+        NotChange[index][name] = value;
+        setcourseNtoffered(NotChange);
+    }
 
     const handleSaveCourseNotOffer = async (obe7_Id) => {
         try {
             const offered = courseNtoffered.map((of, index) => {
+
                 const offer = {
-                    course_Id: of.course_Id,
-                    reason_notTeaching: of.reason_notTeaching,
-                    alternative: of.alternative,
+                    course_Id: of.course_Id || null,
+                    reason_notTeaching: of.reason_notTeaching || null,
+                    alternative: of.alternative || null,
                     obe7_Id: obe7_Id,
+                    user_Id: user.user_Id,
                 }
                 console.log(`Sending Data for Document Course Not Offered Index ${index}:`, offer);
                 return axios.post('http://localhost:8081/api/offered', offer);
@@ -749,15 +885,25 @@ function Fill_obe7() {
         });
     };
 
+    const handleEditChange = (index, event) => {
+        const { name, value } = event.target;
+        const EditTeaching = [...editTeaching];
+
+        EditTeaching[index][name] = value;
+        setEditTeaching(EditTeaching);
+    }
+
     const handleSaveEditTeaching = async (obe7_Id) => {
         try {
             const edit = editTeaching.map((ed, index) => {
+
                 const edtTeaching = {
-                    course_Id: ed.course_Id,
-                    topic_Notteach: ed.topic_Notteach,
-                    reason_Notteach: ed.reason_Notteach,
-                    edit_Teaching: ed.edit_Teaching,
+                    course_Id: ed.course_Id || null,
+                    topic_Notteach: ed.topic_Notteach || null,
+                    reason_Notteach: ed.reason_Notteach || null,
+                    edit_Teaching: ed.edit_Teaching || null,
                     obe7_Id: obe7_Id,
+                    user_Id: user.user_Id,
                 }
 
                 console.log(`Sending Data for Document Edit Teaching Course Index ${index}:`, edtTeaching);
@@ -777,7 +923,7 @@ function Fill_obe7() {
             console.error('Error Saving Data');
         }
     }
-    /* change */
+
     /* Function การวิเคราะห์รายวิชาที่เปิดสอน แต่ไม่มี นศ.ลงทะเบียนเรียน */
     const [notregiscourse, setNotregiscourse] = useState(Array.from({ length: 2 }, () => ({
         course_Id: '',
@@ -818,14 +964,24 @@ function Fill_obe7() {
         });
     };
 
+    const handleRegisNotChange = (index, event) => {
+        const { name, value } = event.target;
+        const notregisChange = [...notregiscourse];
+
+        notregisChange[index][name] = value;
+        setNotregiscourse(notregisChange);
+    }
+
     const handleSaveRegisterNotCourse = async (obe7_Id) => {
         try {
             const nt = notregiscourse.map((ntg, index) => {
+
                 const notregis = {
-                    course_Id: ntg.course_Id,
-                    analyze_Factors_Affect: ntg.analyze_Factors_Affect,
-                    guideline_Improvement: ntg.guideline_Improvement,
+                    course_Id: ntg.course_Id || null,
+                    analyze_Factors_Affect: ntg.analyze_Factors_Affect || null,
+                    guideline_Improvement: ntg.guideline_Improvement || null,
                     obe7_Id: obe7_Id,
+                    user_Id: user.user_Id,
                 }
 
                 console.log(`Sending Data for Document Not Register Course Index ${index}:`, notregis);
@@ -877,11 +1033,13 @@ function Fill_obe7() {
     const handleSaveManageCurriculum = async (obe7_Id) => {
         try {
             const manage = manageCurriculum.map((mg, index) => {
+
                 const mgcurri = {
-                    problem_Name: mg.problem_Name,
-                    effect_Name: mg.effect_Name,
-                    protect_Name: mg.protect_Name,
+                    problem_Name: mg.problem_Name || null,
+                    effect_Name: mg.effect_Name || null,
+                    protect_Name: mg.protect_Name || null,
                     obe7_Id: obe7_Id,
+                    user_Id: user.user_Id,
                 }
 
                 console.log(`Sending Data for Document Management Curriculum Index ${index}:`, mgcurri);
@@ -931,10 +1089,12 @@ function Fill_obe7() {
     const handleSaveCourseEvaluation = async (obe7_Id) => {
         try {
             const courseevl = courseEvalution.map((ce, index) => {
+
                 const evl = {
-                    improtant_Cri: ce.improtant_Cri,
-                    Propose_Chg: ce.Propose_Chg,
+                    improtant_Cri: ce.improtant_Cri || null,
+                    Propose_Chg: ce.Propose_Chg || null,
                     obe7_Id: obe7_Id,
+                    user_Id: user.user_Id,
                 }
 
                 console.log(`Sending Data for Document Course Evalution Index ${index}:`, evl);
@@ -984,11 +1144,15 @@ function Fill_obe7() {
     const handleSaveStakeHolder = async (obe7_Id) => {
         try {
             const stkH = stakeholdersEvl.map((sth, index) => {
+
+                const peopleValue = formData.people === "อื่นๆ" && formData.people_description ? formData.people_description : formData.people;
+
                 const stake = {
-                    people: sth.people,
-                    criticism: sth.criticism,
-                    Propose_Chg: sth.Propose_Chg,
+                    people: peopleValue || null,
+                    criticism: sth.criticism || null,
+                    Propose_Chg: sth.Propose_Chg || null,
                     obe7_Id: obe7_Id,
+                    user_Id: user.user_Id,
                 }
 
                 console.log(`Sending Data for Document StakeHolder Evaluation Index ${index}:`, stake);
@@ -1010,38 +1174,19 @@ function Fill_obe7() {
     }
 
     const handleCheckboxHolderChange = (e) => {
-        const { name, value, type, checked } = e.target;
+        const { name, value, checked } = e.target;
 
-        if (type === "checkbox" && name === "people" && name === "people_other") {
-            if (value === "อื่นๆ") {
-                setFormData(prevState => ({
-                    ...prevState,
-                    people: checked ? value + " " + prevState.obe_75201Other_Dscript : " ",
-                    people_other: checked ? value + " " + prevState.obe_75301Other_Dscript : " "
-                }));
-            } else {
-                setFormData(prevState => ({
-                    ...prevState,
-                    people: checked ? value : " ",
-                    people_other: checked ? value : " ",
-                }));
-            }
-        } else if (name === "obe_75201Other_Dscript") {
-            setFormData(prevState => ({
+        if (name === "people") {
+            setFormData((prevState) => ({
                 ...prevState,
-                [name]: value,
-                people: prevState.people.includes("อื่นๆ") ? "อื่นๆ" + value : prevState.people
+                people: checked ? value : "",
+                people_description: value === "อื่นๆ" && !checked ? "" : prevState.people_description
             }));
-        } else if (name === "obe_75301Other_Dscript") {
-            setFormData(prevState => ({
+        } else if (name === "people_description") {
+
+            setFormData((prevState) => ({
                 ...prevState,
-                [name]: value,
-                people_other: prevState.people_other.includes("อื่นๆ") ? "อื่นๆ" + value : prevState.people_other
-            }));
-        } else {
-            setFormData(prevState => ({
-                ...prevState,
-                [name]: value
+                people_description: value
             }));
         }
     };
@@ -1074,15 +1219,60 @@ function Fill_obe7() {
         setElo_comment(updateOBEDscript75300);
     };
 
+    const handleCheckboxElocom = (e) => {
+        const { name, value, checked } = e.target;
+
+        if (name === "people_other") {
+            setFormData((prevState) => ({
+                ...prevState,
+                people_other: checked ? value : "",
+                peopleother_description: value === "อื่นๆ" && !checked ? "" : prevState.peopleother_description
+            }));
+        } else if (name === "peopleother_description") {
+            setFormData((prevState) => ({
+                ...prevState,
+                peopleother_description: value
+            }));
+        }
+    };
+
+    const [eloOptions, setEloOptions] = useState([]);
+
+    useEffect(() => {
+        const fetchELOData = async () => {
+            try {
+                const response = await axios.get('http://localhost:8081/api/selectedELO');
+
+                console.log("elo_Id:", response.data);
+                setEloOptions(response.data.results);
+            } catch (error) {
+                console.error('Error fetching ELO data:', error);
+            }
+        };
+
+        fetchELOData();
+    }, []);
+
+    const handleEloChange = (index, event) => {
+        const { value } = event.target;
+        const updatedEloComment = [...elo_comment];
+        updatedEloComment[index].elo_Id = value;
+        setElo_comment(updatedEloComment);
+    };
+
     const handleSaveELOsComment = async (obe7_Id) => {
         try {
             const elcomment = elo_comment.map((elc, index) => {
+
+                const peopleValue = formData.people_other === "อื่นๆ" && formData.peopleother_description ? formData.peopleother_description : formData.people_other;
+
                 const cm = {
-                    elo_Id: elc.elo_Id,
-                    people_other: elc.people_other,
-                    comment_Student_elo: elc.comment_Student_elo,
-                    improvement_elo: elc.improvement_elo,
+                    elo_Id: elc.elo_Id || null,
+                    people_other: peopleValue || null,
+                    comment_Student_elo: elc.comment_Student_elo || null,
+                    improvement_elo: elc.improvement_elo || null,
                     obe7_Id: obe7_Id,
+                    user_Id: user.user_Id,
                 }
 
                 console.log(`Sending Data for Document ELOs Comment Index ${index}:`, cm);
@@ -1095,7 +1285,7 @@ function Fill_obe7() {
                 if (response.status === 200) {
                     console.log(`Saving Data for Document ELOs Comment ${index} Complete`);
                 } else {
-                    console.error(`Failed to Save for Document ELOs Comment ${index}: `, response.statusText);
+                    console.error(`Failed to Save for Document ELO Comment ${index}: `, response.statusText);
                 }
             });
         } catch (error) {
@@ -1134,11 +1324,13 @@ function Fill_obe7() {
     const handleSaveSuggestEvaluator = async (obe7_Id) => {
         try {
             const suggest = suggestevalutor.map((sgg, index) => {
+
                 const sg = {
-                    Assessor: sgg.Assessor,
-                    idea: sgg.idea,
-                    content: sgg.content,
+                    Assessor: sgg.Assessor || null,
+                    idea: sgg.idea || null,
+                    content: sgg.content || null,
                     obe7_Id: obe7_Id,
+                    user_Id: user.user_Id,
                 }
 
                 console.log(`Sending Data for Document Suggest Evaluator Index ${index}:`, sg);
@@ -1194,13 +1386,15 @@ function Fill_obe7() {
     const handleSaveProgress = async (obe7_Id) => {
         try {
             const Progresse = progress.map((pg, index) => {
+
                 const pgs = {
-                    action_plan: pg.action_plan,
-                    deadline: pg.deadline,
-                    responsible: pg.responsible,
-                    operationResult: pg.operationResult,
-                    unsuccess: pg.unsuccess,
+                    action_plan: pg.action_plan || null,
+                    deadline: pg.deadline || null,
+                    responsible: pg.responsible || null,
+                    operationResult: pg.operationResult || null,
+                    unsuccess: pg.unsuccess || null,
                     obe7_Id: obe7_Id,
+                    user_Id: user.user_Id,
                 }
 
                 console.log(`Sending Data for Document Progress of Implementation Report Index ${index}:`, pgs);
@@ -1252,12 +1446,14 @@ function Fill_obe7() {
     const handleSaveNewEducation = async (obe7_Id) => {
         try {
             const newEducation = newEducations.map((es, index) => {
+
                 const newEdu = {
-                    plan_next_year: formData.plan_next_year,
-                    actionPlanName: es.actionPlanName,
-                    deadlinePlan: es.deadlinePlan,
-                    Responsible: es.Responsible,
+                    plan_next_year: formData.plan_next_year || null,
+                    actionPlanName: es.actionPlanName || null,
+                    deadlinePlan: es.deadlinePlan || null,
+                    Responsible: es.Responsible || null,
                     obe7_Id: obe7_Id,
+                    user_Id: user.user_Id,
                 }
 
                 console.log(`Sending Data for Document New Action Plan for Next Year Index ${index}:`, newEdu);
@@ -1292,6 +1488,10 @@ function Fill_obe7() {
     /* Function Save Data OBE 7 */
     const handleSaveOBE7 = async () => {
         try {
+            const elosTick = formData.elos_Achieved === "ELO ไม่บรรลุครบทุกตัว" && formData.elo_NtArchive_Dscript
+                ? formData.elo_NtArchive_Dscript
+                : formData.elos_Achieved;
+
             const dataObe7 = {
                 user_Id: user.user_Id,
                 obe7_college: curriculum.college,
@@ -1305,7 +1505,7 @@ function Fill_obe7() {
                 obe_reportDate: formData.obe_Report_Date,
                 report_Academic_Year: formData.report_Academic_Year,
                 analysisDataStudent: formData.analysis_DataStudent,
-                ELo_Archive_bl: formData.elos_Achieved,
+                ELo_Archive_bl: elosTick,
                 obe_description74201: formData.obe_Dscript_74201,
                 obe_description74301: formData.obe_Dscript_74301,
                 obe_76201_description: formData.obe_76201_Dscript,
@@ -1334,13 +1534,23 @@ function Fill_obe7() {
         }
     }
 
+    const [OBE7Ids, setOBE7Ids] = useState(null);
+
     const handleSaveData = async (e) => {
         e.preventDefault();
+
+        const userConfirmed = window.confirm('โปรดตรวจสอบข้อมูลก่อนบันทึก. คุณต้องการบันทึกข้อมูลต่อหรือไม่?');
+
+        if (!userConfirmed) {
+
+            return;
+        }
 
         const obe7_Id = await handleSaveOBE7()
 
         if (obe7_Id) {
-            console.log('Successfull Saved OBE 7 obe7_Id:', obe7_Id);
+            console.log('Successfull Saved OBE 7:', obe7_Id);
+            setOBE7Ids(obe7_Id);
 
             await handleSaveCurriculumTeacher(obe7_Id);
             await handleSaveImgOBE7(obe7_Id);
@@ -1355,17 +1565,20 @@ function Fill_obe7() {
             await handleSaveELOsComment(obe7_Id);
             await handleSaveSuggestEvaluator(obe7_Id);
             await handleSaveProgress(obe7_Id);
+            await handleSaveQualification(obe7_Id);
             await handleSaveNewEducation(obe7_Id);
+
+            console.log('All Data Successful Saved');
         } else {
             console.error('Error Saving Data Document All');
         }
     };
 
     /* Function Download PDF */
-    const [showPdf, setShowPdf] = useState(false);
+    const RenderPDF = async (e) => {
+        e.preventDefault();
 
-    const RenderPDF = () => (
-        <PDFDownloadLink document={
+        const doc = (
             <MyDocument7
                 curriculum={curriculum}
                 formData={formData}
@@ -1381,22 +1594,41 @@ function Fill_obe7() {
                 courseEvalution={courseEvalution}
                 stakeholdersEvl={stakeholdersEvl}
                 elo_comment={elo_comment}
+                eloOptions={eloOptions}
                 qualifications={qualifications}
                 suggestevalutor={suggestevalutor}
                 progress={progress}
                 newEducations={newEducations}
             />
-        } fileName="Document OBE 7.pdf">
-            {({ blob, url, loading, error }) => (loading ? 'Loading Document...' : <button className="button-download" type="button"> Download </button>)}
-        </PDFDownloadLink>
-    );
+        );
 
-    const handleDownloadPDF = async (e) => {
-        e.preventDefault();
+        const blob = await pdf(doc).toBlob();
+        const Data = new FormData();
+        const fileSize = blob.size;
+        const fileName = `${formData.report_Academic_Year}.pdf`;
 
-        setShowPdf(true);
-        RenderPDF();
-    }
+        Data.append('pdfFile', blob, fileName);
+        Data.append('fileSize', fileSize);
+        Data.append('fileName', fileName);
+        Data.append('obe7Id', OBE7Ids);
+
+        const response = await fetch(`http://localhost:8081/api/pdf7`, {
+            method: 'POST',
+            body: Data
+        });
+
+        if (response.status === 200) {
+            console.log('PDF Outcome Based Education 7 Uploaded on Database Successful');
+        } else {
+            console.error('Failed to Upload PDF Outcome Based Education 7');
+        }
+
+        const link = document.createElement('a');
+
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName;
+        link.click();
+    };
 
     return (
         <>
@@ -1411,6 +1643,45 @@ function Fill_obe7() {
 
                         <div className="name-head">
                             <b> <p> รายงานผลการดำเนินการของหลักสูตร </p> </b>
+                        </div>
+
+                        <div className="input-group">
+                            <label className="from-head-recommend"> * เลือกปีการศึกษาในกรณีมีข้อมูล Outcome-Based Education 7 * </label>
+                            <div className="input-group">
+                                <select
+                                    id="yearselect"
+                                    value={selectyearobe7}
+                                    onChange={(e) => setselectyearobe7(e.target.value)}
+                                >
+                                    <option value=""> Select Year </option>
+                                    {yearobe7.map((item) => (
+                                        <option key={item.year} value={item.year}>
+                                            {item.year}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label className="from-head-recommend"> เลือก User ที่เคยบันทึก Outcome-Based Education 7 </label>
+                            <div className="input-group">
+                                <select
+                                    className="select-user-obe7"
+                                    id="useridselect"
+                                    value={selectedUserId}
+                                    onChange={(e) => setSelectedUserId(e.target.value)}
+                                >
+                                    <option value=""> กรุณาเลือกชื่อผู้ใช้ </option>
+                                    {usersInObe7.map((us) => (
+                                        <option key={us.user_Id} value={us.user_Id}>
+                                            {us.user_FirstName} {us.user_LastName}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                <button className="btn-search-obe7" onClick={handleSearch}> Search OBE 7 </button>
+                            </div>
                         </div>
 
                         <form>
@@ -1542,8 +1813,8 @@ function Fill_obe7() {
                                                                 onChange={(event) => handleCurriculumTeacherChange(index, event)}
                                                             >
                                                                 <option className="from-option-qualification"> Select Qualification </option>
-                                                                {qualification.map((qua, idx) => (
-                                                                    <option className="from-option-qualification" key={idx} value={qua}> {qua} </option>
+                                                                {(teacher.qualificationOptions || []).map((qua, idx) => (
+                                                                    <option key={idx} value={qua}> {qua} </option>
                                                                 ))}
                                                             </select>
                                                         </td>
@@ -1555,8 +1826,8 @@ function Fill_obe7() {
                                                                 onChange={(event) => handleCurriculumTeacherChange(index, event)}
                                                             >
                                                                 <option className="from-option-position"> Select Position </option>
-                                                                {positions.map((ps, idxs) => (
-                                                                    <option className="from-option-position" key={idxs} value={ps}> {ps} </option>
+                                                                {(teacher.positionsOptions || []).map((ps, idxs) => (
+                                                                    <option key={idxs} value={ps}> {ps} </option>
                                                                 ))}
                                                             </select>
                                                         </td>
@@ -1697,7 +1968,7 @@ function Fill_obe7() {
                                                                 type="text"
                                                                 rows={3}
                                                                 value={alsc.abnormalities}
-                                                                onChange={(event) => handleAnalysisCourseChange(index, event)}
+                                                                onChange={(event) => handleAnalysisChange(index, event)}
                                                             />
                                                         </td>
                                                         <td>
@@ -1706,7 +1977,7 @@ function Fill_obe7() {
                                                                 name="conducting"
                                                                 type="text"
                                                                 value={alsc.conducting}
-                                                                onChange={(event) => handleAnalysisCourseChange(index, event)}
+                                                                onChange={(event) => handleAnalysisChange(index, event)}
                                                             />
                                                         </td>
                                                         <td>
@@ -1715,7 +1986,7 @@ function Fill_obe7() {
                                                                 name="factoranalysis"
                                                                 type="text"
                                                                 value={alsc.factoranalysis}
-                                                                onChange={(event) => handleAnalysisCourseChange(index, event)}
+                                                                onChange={(event) => handleAnalysisChange(index, event)}
                                                             />
                                                         </td>
                                                         <td>
@@ -1724,14 +1995,13 @@ function Fill_obe7() {
                                                                 name="guideimprovement"
                                                                 type="text"
                                                                 value={alsc.guideimprovement}
-                                                                onChange={(event) => handleAnalysisCourseChange(index, event)}
+                                                                onChange={(event) => handleAnalysisChange(index, event)}
                                                             />
                                                         </td>
                                                         <button className="analysis-subject-delete" type="button" onClick={() => handleDeleteAnalysisCourse(index)}> - </button>
                                                     </tr>
                                                 ))}
                                             </tbody>
-                                            {/* <button onClick={CheckValue}>S</button> */}
                                         </table>
                                     </div>
 
@@ -1877,7 +2147,7 @@ function Fill_obe7() {
                                             name="elos_Achieved"
                                             type="checkbox"
                                             value="ELOs ยังคงบรรลุครบทุกตัว"
-                                            checked={formData.elos_Achieved.includes("ELOs ยังคงบรรลุครบทุกตัว")}
+                                            checked={formData.elos_Achieved === "ELOs ยังคงบรรลุครบทุกตัว"}
                                             onChange={ELOsToggleText}
                                         />
                                         ELOs ยังคงบรรลุครบทุกตัว <br />
@@ -1886,11 +2156,11 @@ function Fill_obe7() {
                                             name="elos_Achieved"
                                             type="checkbox"
                                             value="ELOs ไม่บรรลุครบทุกตัว"
-                                            checked={formData.elos_Achieved.includes("ELOs ไม่บรรลุครบทุกตัว")}
+                                            checked={formData.elos_Achieved === "ELOs ไม่บรรลุครบทุกตัว"}
                                             onChange={ELOsToggleText}
                                         />
                                         ELOs ไม่บรรลุครบทุกตัว แต่มีมาตรการแก้ไขที่ดำเนินการเพื่อให้ ELOs บรรลุ คือ
-                                        {formData.elos_Achieved.includes("ELOs ไม่บรรลุครบทุกตัว") && (
+                                        {formData.elos_Achieved === "ELOs ไม่บรรลุครบทุกตัว" && (
                                             <input
                                                 className="from-02"
                                                 name="elo_NtArchive_Dscript"
@@ -1929,7 +2199,7 @@ function Fill_obe7() {
                                                                 })}
                                                                 onChange={(event) => handleCourseNotOfferChange(index, event)}
                                                             >
-                                                                <option> Select Course </option>
+                                                                <option value={JSON.stringify("-")}> Select Course </option>
                                                                 {chooseCourse.map(cs => (
                                                                     <option key={cs.course_Id} value={JSON.stringify({
                                                                         course_Id: cs.course_Id,
@@ -1947,7 +2217,7 @@ function Fill_obe7() {
                                                                 name="reason_notTeaching"
                                                                 type="text"
                                                                 value={ofred.reason_notTeaching}
-                                                                onChange={(event) => handleCourseNotOfferChange(index, event)}
+                                                                onChange={(event) => handleCourseNotChange(index, event)}
                                                             />
                                                         </td>
                                                         <td>
@@ -1956,7 +2226,7 @@ function Fill_obe7() {
                                                                 name="alternative"
                                                                 type="text"
                                                                 value={ofred.alternative}
-                                                                onChange={(event) => handleCourseNotOfferChange(index, event)}
+                                                                onChange={(event) => handleCourseNotChange(index, event)}
                                                             />
                                                         </td>
                                                         <td className="none">
@@ -1993,7 +2263,7 @@ function Fill_obe7() {
                                                                 })}
                                                                 onChange={(event) => handleEditTeachingChange(index, event)}
                                                             >
-                                                                <option> Select Course </option>
+                                                                <option value={JSON.stringify("-")}> Select Course </option>
                                                                 {chooseCourse.map(cs => (
                                                                     <option key={cs.course_Id} value={JSON.stringify({
                                                                         course_Id: cs.course_Id,
@@ -2011,7 +2281,7 @@ function Fill_obe7() {
                                                                 name="topic_Notteach"
                                                                 type="text"
                                                                 value={edth.topic_Notteach}
-                                                                onChange={(event) => handleEditTeachingChange(index, event)}
+                                                                onChange={(event) => handleEditChange(index, event)}
                                                             />
                                                         </td>
                                                         <td>
@@ -2020,7 +2290,7 @@ function Fill_obe7() {
                                                                 name="reason_Notteach"
                                                                 type="text"
                                                                 value={edth.reason_Notteach}
-                                                                onChange={(event) => handleEditTeachingChange(index, event)}
+                                                                onChange={(event) => handleEditChange(index, event)}
                                                             />
                                                         </td>
                                                         <td>
@@ -2029,7 +2299,7 @@ function Fill_obe7() {
                                                                 name="edit_Teaching"
                                                                 type="text"
                                                                 value={edth.edit_Teaching}
-                                                                onChange={(event) => handleEditTeachingChange(index, event)}
+                                                                onChange={(event) => handleEditChange(index, event)}
                                                             />
                                                         </td>
                                                         <td className="none">
@@ -2065,7 +2335,7 @@ function Fill_obe7() {
                                                                 })}
                                                                 onChange={(event) => handleRegisterNotCourseChange(index, event)}
                                                             >
-                                                                <option> Select Course </option>
+                                                                <option value={JSON.stringify("-")}> Select Course </option>
                                                                 {chooseCourse.map(cs => (
                                                                     <option key={cs.course_Id} value={JSON.stringify({
                                                                         course_Id: cs.course_Id,
@@ -2083,7 +2353,7 @@ function Fill_obe7() {
                                                                 name="analyze_Factors_Affect"
                                                                 type="text"
                                                                 value={ntc.analyze_Factors_Affect}
-                                                                onChange={(event) => handleRegisterNotCourseChange(index, event)}
+                                                                onChange={(event) => handleRegisNotChange(index, event)}
                                                             />
                                                         </td>
                                                         <td>
@@ -2092,7 +2362,7 @@ function Fill_obe7() {
                                                                 name="guideline_Improvement"
                                                                 type="text"
                                                                 value={ntc.guideline_Improvement}
-                                                                onChange={(event) => handleRegisterNotCourseChange(index, event)}
+                                                                onChange={(event) => handleRegisNotChange(index, event)}
                                                             />
                                                         </td>
                                                         <td className="none">
@@ -2205,7 +2475,6 @@ function Fill_obe7() {
                                                                 value={Cevl.improtant_Cri}
                                                                 onChange={(event) => handleCourseEvaluationChange(index, event)}
                                                             />
-
                                                         </td>
                                                         <td>
                                                             <textarea
@@ -2232,7 +2501,7 @@ function Fill_obe7() {
                                             name="people"
                                             type="checkbox"
                                             value="นักศึกษา"
-                                            checked={formData.people.includes("นักศึกษา")}
+                                            checked={formData.people === "นักศึกษา"}
                                             onChange={handleCheckboxHolderChange}
                                         />นักศึกษา
                                         <input
@@ -2240,7 +2509,7 @@ function Fill_obe7() {
                                             name="people"
                                             type="checkbox"
                                             value="ศิษย์เก่า"
-                                            checked={formData.people.includes("ศิษย์เก่า")}
+                                            checked={formData.people === "ศิษย์เก่า"}
                                             onChange={handleCheckboxHolderChange}
                                         />ศิษย์เก่า
                                         <input
@@ -2248,7 +2517,7 @@ function Fill_obe7() {
                                             name="people"
                                             type="checkbox"
                                             value="ผู้ใช้บัณฑิต"
-                                            checked={formData.people.includes("ผู้ใช้บัณฑิต")}
+                                            checked={formData.people === "ผู้ใช้บัณฑิต"}
                                             onChange={handleCheckboxHolderChange}
                                         />ผู้ใช้บัณฑิต <br />
                                         <input
@@ -2256,7 +2525,7 @@ function Fill_obe7() {
                                             name="people"
                                             type="checkbox"
                                             value="อาจารย์และบุคลากรสายสนับสนุน"
-                                            checked={formData.people.includes("อาจารย์และบุคลากรสายสนับสนุน")}
+                                            checked={formData.people === "อาจารย์และบุคลากรสายสนับสนุน"}
                                             onChange={handleCheckboxHolderChange}
                                         />อาจารย์และบุคลากรสายสนับสนุน
                                         <input
@@ -2264,14 +2533,14 @@ function Fill_obe7() {
                                             name="people"
                                             type="checkbox"
                                             value="อื่นๆ"
-                                            checked={formData.people.includes("อื่นๆ")}
+                                            checked={formData.people === "อื่นๆ"}
                                             onChange={handleCheckboxHolderChange}
                                         /> อื่นๆ
-                                        {formData.people.includes("อื่นๆ") && (
+                                        {formData.people === "อื่นๆ" && (
                                             <input
                                                 className="input-check4-obe7"
-                                                name="obe_75201Other_Dscript"
-                                                value={formData.obe_75201Other_Dscript}
+                                                name="people_description"
+                                                value={formData.people_description}
                                                 onChange={handleCheckboxHolderChange}
                                             />
                                         )}
@@ -2320,47 +2589,47 @@ function Fill_obe7() {
                                             name="people_other"
                                             type="checkbox"
                                             value="นักศึกษา"
-                                            checked={formData.people_other.includes("นักศึกษา")}
-                                            onChange={handleCheckboxHolderChange}
+                                            checked={formData.people_other === "นักศึกษา"}
+                                            onChange={handleCheckboxElocom}
                                         />นักศึกษา
                                         <input
                                             className="from-check1-obe7"
                                             name="people_other"
                                             type="checkbox"
                                             value="ศิษย์เก่า"
-                                            checked={formData.people_other.includes("ศิษย์เก่า")}
-                                            onChange={handleCheckboxHolderChange}
+                                            checked={formData.people_other === "ศิษย์เก่า"}
+                                            onChange={handleCheckboxElocom}
                                         />ศิษย์เก่า
                                         <input
                                             className="from-check1-obe7"
                                             name="people_other"
                                             type="checkbox"
                                             value="ผู้ใช้บัณฑิต"
-                                            checked={formData.people_other.includes("ผู้ใช้บัณฑิต")}
-                                            onChange={handleCheckboxHolderChange}
+                                            checked={formData.people_other === "ผู้ใช้บัณฑิต"}
+                                            onChange={handleCheckboxElocom}
                                         />ผู้ใช้บัณฑิต <br />
                                         <input
                                             className="from-check2-obe7"
                                             name="people_other"
                                             type="checkbox"
                                             value="อาจารย์และบุคลากรสายสนับสนุน"
-                                            checked={formData.people_other.includes("อาจารย์และบุคลากรสายสนับสนุน")}
-                                            onChange={handleCheckboxHolderChange}
+                                            checked={formData.people_other === "อาจารย์และบุคลากรสายสนับสนุน"}
+                                            onChange={handleCheckboxElocom}
                                         />อาจารย์และบุคลากรสายสนับสนุน
                                         <input
                                             className="from-check3-obe7"
                                             name="people_other"
                                             type="checkbox"
                                             value="อื่นๆ"
-                                            checked={formData.people_other.includes("อื่นๆ")}
-                                            onChange={handleCheckboxHolderChange}
+                                            checked={formData.people_other === "อื่นๆ"}
+                                            onChange={handleCheckboxElocom}
                                         /> อื่นๆ
-                                        {formData.people_other.includes("อื่นๆ") && (
+                                        {formData.people_other === "อื่นๆ" && (
                                             <input
                                                 className="input-check4-obe7"
-                                                name="obe_75301Other_Dscript"
-                                                value={formData.obe_75301Other_Dscript}
-                                                onChange={handleCheckboxHolderChange}
+                                                name="peopleother_description"
+                                                value={formData.peopleother_description}
+                                                onChange={handleCheckboxElocom}
                                             />
                                         )}
 
@@ -2376,13 +2645,20 @@ function Fill_obe7() {
                                                 {elo_comment.map((cm, index) => (
                                                     <tr key={index}>
                                                         <td>
-                                                            <input
+                                                            <select
                                                                 className="from-table01"
                                                                 name="elo_Id"
                                                                 type="text"
                                                                 value={cm.elo_Id}
-                                                                onChange={(event) => handleELOsCommentChange(index, event)}
-                                                            />
+                                                                onChange={(event) => handleEloChange(index, event)}
+                                                            >
+                                                                <option value=""> Select ELO </option>
+                                                                {eloOptions.map((elo) => (
+                                                                    <option key={elo.elo_Id} value={elo.elo_Id}>
+                                                                        {elo.elo_code} - {elo.elo_Name}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
                                                         </td>
                                                         <td>
                                                             <input
@@ -2702,8 +2978,7 @@ function Fill_obe7() {
                             <button className="button-save-obe7" type="button" onClick={handleSaveData}> Save </button>
 
                             {/* Download OBE 7 */}
-                            <button className="button-download-obe7" type="button" onClick={handleDownloadPDF}> PDF </button>
-                            {showPdf && (<RenderPDF />)}
+                            <button className="button-download-obe7" type="button" onClick={RenderPDF}> Download </button>
                         </div>
 
                     </div>

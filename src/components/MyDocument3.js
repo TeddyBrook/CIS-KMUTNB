@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
         fontFamily: 'THSarabun_Bold', textAlign: 'left', marginTop: 2, marginBottom: 2, marginLeft: 100, marginRight: 100,
     },
     topic1: {
-        fontFamily: 'THSarabun_Bold', textAlign: 'left', marginTop: 10, marginLeft: 100, marginRight: 100,
+        fontFamily: 'THSarabun_Bold', textAlign: 'left', marginTop: 10, marginBottom: 2, marginLeft: 100, marginRight: 100,
     },
     topic2: {
         fontFamily: 'THSarabun_Bold', display: 'flex', flexDirection: 'row', marginTop: 2, marginLeft: 100,
@@ -159,40 +159,43 @@ const styles = StyleSheet.create({
         width: 133, backgroundColor: '#fff', borderBottomWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, padding: 2,
     },
     cell3: {
-        width: 133, backgroundColor: '#fff', borderBottomWidth: 1, borderRightWidth: 1, padding: 2,
+        width: 133, backgroundColor: '#fff', textAlign: 'left', borderBottomWidth: 1, borderRightWidth: 1, padding: 5,
     },
     cell4: {
         width: 40, backgroundColor: '#fff', borderBottomWidth: 1, borderLeftWidth: 1, padding: 2,
     },
     cell5: {
-        width: 120, backgroundColor: '#fff', borderBottomWidth: 1, borderLeftWidth: 1, padding: 2,
+        width: 120, backgroundColor: '#fff', textAlign: 'left', borderBottomWidth: 1, borderLeftWidth: 1, padding: 5,
     },
     cell6: {
-        width: 60, backgroundColor: '#fff', borderBottomWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, padding: 2,
+        width: 60, backgroundColor: '#fff', textAlign: 'center', borderBottomWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, padding: 5,
     },
     cell7: {
-        width: 55, backgroundColor: '#fff', borderBottomWidth: 1, borderRightWidth: 1, padding: 2,
+        width: 55, backgroundColor: '#fff', textAlign: 'center', borderBottomWidth: 1, borderRightWidth: 1, padding: 5,
     },
     cell8: {
-        width: 70, backgroundColor: '#fff', borderBottomWidth: 1, borderRightWidth: 1, padding: 2,
+        width: 70, backgroundColor: '#fff', textAlign: 'left', borderBottomWidth: 1, borderRightWidth: 1, padding: 5,
     },
     cell9: {
-        width: 95, backgroundColor: '#fff', borderBottomWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, padding: 2,
+        width: 95, backgroundColor: '#fff', textAlign: 'left', borderBottomWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, padding: 5,
     },
     cell10: {
-        width: 100, backgroundColor: '#fff', borderBottomWidth: 1, borderRightWidth: 1, padding: 2,
+        width: 100, backgroundColor: '#fff', textAlign: 'left', borderBottomWidth: 1, borderRightWidth: 1, padding: 5,
     },
     cell11: {
         width: 35, fontFamily: 'THSarabun_Bold', backgroundColor: '#ccc', textAlign: 'center', borderTopWidth: 1, borderBottomWidth: 1, borderRightWidth: 1, padding: 2,
     },
     cell12: {
-        width: 150, backgroundColor: '#fff', borderBottomWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, whiteSpace: 'pre-wrap', wordBreak: 'break-all', padding: 2,
+        width: 150, backgroundColor: '#fff', textAlign: 'left', borderBottomWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, whiteSpace: 'pre-wrap', wordBreak: 'break-all', paddingLeft: 5,
     },
     cell13: {
         width: 35, backgroundColor: '#fff', textAlign: 'center', borderBottomWidth: 1, borderRightWidth: 1, padding: 2,
     },
     cell14: {
         width: 35, fontFamily: 'THSarabun_Bold', backgroundColor: '#ccc', textAlign: 'center', borderTopWidth: 1, borderBottomWidth: 1, borderRightWidth: 1, paddingTop: 10,
+    },
+    cell15: {
+        width: 100, backgroundColor: '#fff', textAlign: 'center', borderBottomWidth: 1, borderRightWidth: 1, padding: 5,
     },
 });
 
@@ -205,7 +208,7 @@ const Checkbox = ({ label, check }) => (
     </View>
 );
 
-function MyDocument3({ showData, fromQualityAssurance, formDataOBE3, courseTimeData, CloFromData, selectedTable, ELOs, valueCompareClowElo, attribute, ValueCompareCLOwAttribute, experience, measuring, Plans, assessments, Treatises }) {
+function MyDocument3({ showData, selectedInstructorNames, fromQualityAssurance, formDataOBE3, courseTimeData, CloFromData, selectedTable, ELOs, valueCompareClowElo, attribute, ValueCompareCLOwAttribute, experience, measuring, Plans, assessments, Treatises }) {
 
     return (
         <Document>
@@ -261,14 +264,21 @@ function MyDocument3({ showData, fromQualityAssurance, formDataOBE3, courseTimeD
                     <Text style={styles.font}> อาจารย์ผู้รับผิดชอบรายวิชา </Text>
                     <Text style={{ marginLeft: 30 }}> {showData.responsible_Teacher} </Text>
                 </View>
-                <View style={styles.description2}>
-                    <Text style={styles.font}> อาจารย์ผู้สอน </Text>
-                    <Text style={{ marginLeft: 75 }}>{showData.course_Instructor}</Text>
-                </View>
-                <View style={{ flexDirection: 'column', alignItems: 'left' }}>
-                    <Text style={{ marginLeft: 244 }}>{showData.course_Instructor2}</Text>
-                    <Text style={{ marginLeft: 244 }}>{showData.course_Instructor3}</Text>
-                    <Text style={{ marginLeft: 244 }}>{showData.course_Instructor4}</Text>
+
+                <View style={{ flexDirection: 'row', marginLeft: 123 }}>
+                    <Text style={styles.font}>อาจารย์ผู้สอน</Text>
+                    <Text style={{ marginLeft: 78 }}>
+                        {selectedInstructorNames.length > 0 ? (
+                            <>
+                                <Text>{selectedInstructorNames[0]}</Text>
+                                {selectedInstructorNames.slice(1).map((name, index) => (
+                                    <Text key={index + 1} style={{ marginLeft: 244 }}>{'\n'}{name}</Text>
+                                ))}
+                            </>
+                        ) : (
+                            <Text>ไม่มีอาจารย์ผู้สอน</Text>
+                        )}
+                    </Text>
                 </View>
 
                 <Text style={styles.topic}> 5. ภาคการศึกษา/ชั้นปีที่เรียน </Text>
@@ -333,6 +343,7 @@ function MyDocument3({ showData, fromQualityAssurance, formDataOBE3, courseTimeD
 
                 <Text style={styles.topic1}> 1. คำอธิบายรายวิชา </Text>
                 <Text style={styles.description}>{showData.course_Description || 'N/A'}</Text>
+                <Text style={styles.description}>{showData.course_DescriptionEng || 'N/A'}</Text>
 
                 <Text style={styles.topic}> 2. จำนวนชั่วโมงที่ใช้ต่อสัปดาห์ </Text>
                 <View style={styles.table}>
@@ -406,7 +417,7 @@ function MyDocument3({ showData, fromQualityAssurance, formDataOBE3, courseTimeD
                                 </View>
                                 {ELOs.map((elo, ELOindex) => (
                                     <View key={ELOindex} style={styles.headerRow}>
-                                        <Text style={styles.cell12}> {elo.elo_code || 'N/A'} {elo.elo_Name || 'N/A'} </Text>
+                                        <Text style={styles.cell12}>{elo.elo_code || 'N/A'} {elo.elo_Name || 'N/A'} </Text>
                                         {CloFromData.map((clo, CLOindex) => (
                                             <Text key={CLOindex} style={styles.cell13}>
                                                 {valueCompareClowElo[ELOindex][CLOindex] ? <Image src={tickIcon} style={styles.icon} /> : ''}
@@ -459,6 +470,7 @@ function MyDocument3({ showData, fromQualityAssurance, formDataOBE3, courseTimeD
                 </View>
 
                 <Text style={styles.mode}> หมวดที่ 3 การพัฒนานักศึกษาตามผลลัพธ์การเรียนรู้ที่คาดหวัง </Text>
+
                 <Text style={styles.topic1}>วิธีการจัดประสบการณ์การเรียนรู้เพื่อพัฒนาความรู้หรือทักษะและการวัดผลลัพธ์การเรียนรู้ของรายวิชาที่สอดคล้องกับผลลัพธ์ การเรียนรู้ ที่คาดหวังของ รายวิชา (CLOs) ในหมวดที่ 2 ข้อ 4 </Text>
                 <View style={styles.table1}>
                     <View style={styles.headerRow}>
@@ -468,32 +480,9 @@ function MyDocument3({ showData, fromQualityAssurance, formDataOBE3, courseTimeD
                     </View>
                     {CloFromData.map((clos, CLOindex) => (
                         <View style={styles.headerRow}>
-                            <Text key={CLOindex} style={styles.cell2}> {clos.clo_code || 'N/A'} {clos.clo_Name || 'N/A'} </Text>
-                            <Text style={styles.cell3}> {experience[CLOindex]?.experience_Name || 'N/A'} </Text>
-                            <Text style={styles.cell3}> {measuring[CLOindex]?.measuring_Name || 'N/A'} </Text>
-                        </View>
-                    ))}
-                </View>
-
-                <Text style={styles.mode}> หมวดที่ 4 แผนการสอนและการประเมินผล </Text>
-                <Text style={styles.topic1}> 1. แผนการสอน </Text>
-                <View style={styles.table1}>
-                    <View style={styles.headerRow}>
-                        <Text style={styles.headerCell6}> สัปดาห์ที่ </Text>
-                        <Text style={styles.headerCell7}> หัวข้อ/ รายละเอียด </Text>
-                        <Text style={styles.headerCell8}> CLOs </Text>
-                        <Text style={styles.headerCell9}> จำนวนชั่วโมง บรรยาย </Text>
-                        <Text style={styles.headerCell9}> จำนวนชั่วโมง ปฎิบัติการ </Text>
-                        <Text style={styles.headerCell10}> กิจกรรม การเรียนการสอน </Text>
-                    </View>
-                    {Plans.map((plan, index) => (
-                        <View style={styles.headerRow} key={index}>
-                            <Text style={styles.cell4}>{index + 1}</Text>
-                            <Text style={styles.cell5}>{Plans[index]?.plan_Name || 'N/A'}</Text>
-                            <Text style={styles.cell6}>{Plans[index]?.plan_Clo || 'N/A'}</Text>
-                            <Text style={styles.cell7}>{Plans[index]?.lecture_Hours || 'N/A'}</Text>
-                            <Text style={styles.cell7}>{Plans[index]?.pratice_Hours || 'N/A'}</Text>
-                            <Text style={styles.cell8}>{Plans[index]?.plan_description}</Text>
+                            <Text key={CLOindex} style={styles.cell2}> {clos.clo_code || 'N/A'} </Text>
+                            <Text style={styles.cell3}>{experience[CLOindex]?.experience_Name || 'N/A'}</Text>
+                            <Text style={styles.cell3}>{measuring[CLOindex]?.measuring_Name || 'N/A'}</Text>
                         </View>
                     ))}
                 </View>
@@ -514,6 +503,67 @@ function MyDocument3({ showData, fromQualityAssurance, formDataOBE3, courseTimeD
                     <Text style={styles.header4}> คณะ วิทยาศาสตร์ประยุกต์ </Text>
                 </View>
 
+                <Text style={styles.mode}> หมวดที่ 4 แผนการสอนและการประเมินผล </Text>
+
+                <Text style={styles.topic1}> 1. แผนการสอน </Text>
+                <View style={styles.table1}>
+                    <View style={styles.headerRow}>
+                        <Text style={styles.headerCell6}> สัปดาห์ที่ </Text>
+                        <Text style={styles.headerCell7}> หัวข้อ/ รายละเอียด </Text>
+                        <Text style={styles.headerCell8}> CLOs </Text>
+                        <Text style={styles.headerCell9}> จำนวนชั่วโมง บรรยาย </Text>
+                        <Text style={styles.headerCell9}> จำนวนชั่วโมง ปฎิบัติการ </Text>
+                        <Text style={styles.headerCell10}> กิจกรรม การเรียนการสอน </Text>
+                    </View>
+                    {Plans.slice(0, 12).map((plan, index) => (
+                        <View style={styles.headerRow} key={index}>
+                            <Text style={styles.cell4}>{index + 1}</Text>
+                            <Text style={styles.cell5}>{plan.plan_Name}</Text>
+                            <Text style={styles.cell6}>{plan.plan_Clo}</Text>
+                            <Text style={styles.cell7}>{plan.lecture_Hours}</Text>
+                            <Text style={styles.cell7}>{plan.pratice_Hours}</Text>
+                            <Text style={styles.cell8}>{plan.plan_description}</Text>
+                        </View>
+                    ))}
+                </View>
+            </Page>
+
+            <Page style={styles.font}>
+                <View style={styles.logo}>
+                    <Image src={LogoDoc} style={styles.logos} />
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header1}> หลักสูตร วิทยาศาสตรบัณฑิต </Text>
+                    <Text style={styles.header2}> ภาควิชา วิทยาการคอมพิวเตอร์และสารสนเทศ </Text>
+                </View>
+
+                <View style={styles.header}>
+                    <Text style={styles.header3}> ระดับปริญญา ปริญญาตรี </Text>
+                    <Text style={styles.header4}> คณะ วิทยาศาสตร์ประยุกต์ </Text>
+                </View>
+
+                <View style={styles.table1}>
+                    <View style={styles.headerRow}>
+                        <Text style={styles.headerCell6}> สัปดาห์ที่ </Text>
+                        <Text style={styles.headerCell7}> หัวข้อ/ รายละเอียด </Text>
+                        <Text style={styles.headerCell8}> CLOs </Text>
+                        <Text style={styles.headerCell9}> จำนวนชั่วโมง บรรยาย </Text>
+                        <Text style={styles.headerCell9}> จำนวนชั่วโมง ปฎิบัติการ </Text>
+                        <Text style={styles.headerCell10}> กิจกรรม การเรียนการสอน </Text>
+                    </View>
+                    {Plans.slice(12).map((plan, index) => (
+                        <View style={styles.headerRow} key={index}>
+                            <Text style={styles.cell4}>{index + 13}</Text>
+                            <Text style={styles.cell5}> {plan.plan_Name} </Text>
+                            <Text style={styles.cell6}> {plan.plan_Clo} </Text>
+                            <Text style={styles.cell7}> {plan.lecture_Hours} </Text>
+                            <Text style={styles.cell7}> {plan.pratice_Hours} </Text>
+                            <Text style={styles.cell8}> {plan.plan_description} </Text>
+                        </View>
+                    ))}
+                </View>
+
                 <Text style={styles.topic}> 2. แผนการประเมินตามผลลัพธ์การเรียนรู้ที่คาดหวังของรายวิชา </Text>
                 <View style={styles.table1}>
                     <View style={styles.headerRow}>
@@ -526,13 +576,14 @@ function MyDocument3({ showData, fromQualityAssurance, formDataOBE3, courseTimeD
                         <View style={styles.headerRow} key={index}>
                             <Text style={styles.cell9}>{assessments[index]?.assessment_outCome || 'N/A'}</Text>
                             <Text style={styles.cell10}>{assessments[index]?.activity_Learning || 'N/A'}</Text>
-                            <Text style={styles.cell10}>{assessments[index]?.assessment_Deadline || 'N/A'}</Text>
-                            <Text style={styles.cell10}>{assessments[index]?.assessment_Proportion || 'N/A'}</Text>
+                            <Text style={styles.cell15}>{assessments[index]?.assessment_Deadline || 'N/A'}</Text>
+                            <Text style={styles.cell15}>{assessments[index]?.assessment_Proportion || 'N/A'}</Text>
                         </View>
                     ))}
                 </View>
 
                 <Text style={styles.mode}> หมวดที่ 5 ทรัพยากรประกอบการเรียนการสอน </Text>
+
                 <Text style={styles.topic1}> ตำราและเอกสารที่ใช้ประกอบการเรียนการสอน </Text>
                 {Treatises.map((treatise, index) => (
                     <Text key={index + 1} style={styles.description}> {treatise.textbook_Name || 'N/A'} </Text>
@@ -686,7 +737,7 @@ function MyDocument3({ showData, fromQualityAssurance, formDataOBE3, courseTimeD
                         style={styles.checkbox}
                     />
                     {formDataOBE3.other6_5_bl && (
-                        <Text style={{ color: 'black' }}> {formDataOBE3.other6_5_Dscript} </Text>
+                        <Text style={{ color: 'black' }}> {formDataOBE3.other6_5_description} </Text>
                     )}
                 </View>
             </Page>

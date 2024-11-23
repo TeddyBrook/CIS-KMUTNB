@@ -29,14 +29,13 @@ import View_obe3 from './components/View_obe3';
 import View_obe5 from './components/View_obe5';
 import View_obe7 from './components/View_obe7';
 
-/* Component Fill Out Document OBE 3 */
+/* Component Fill Out Document */
 import Fill_obe3 from './components/Fill_obe3';
-
-/* Component Fill Out Document OBE 5 */
 import Fill_obe5 from './components/Fill_obe5';
-
-/* Component Fill Out Document OBE 7 */
 import Fill_obe7 from './components/Fill_obe7';
+
+/* Component ChatBot */
+import Chatbot from "./components/Chatbot";
 
 function Home() {
     return (
@@ -73,15 +72,14 @@ function App() {
                     <Route path="/View_obe5" element={<View_obe5 />} />
                     <Route path="/View_obe7" element={<View_obe7 />} />
 
-                    {/* Fill Out Document OBE 3 */}
+                    {/* Fill Out Document */}
                     <Route path="/Fill_obe3" element={<Fill_obe3 />} />
-
-                    {/* Fill Out Document OBE 5 */}
                     <Route path="/Fill_obe5" element={<Fill_obe5 />} />
-
-                    {/* Fill Out Document OBE 7 */}
                     <Route path="/Fill_obe7" element={<Fill_obe7 />} />
                 </Routes>
+
+                {/* ChatBot */}
+                <Chatbot path="/Chatbot" element={<Chatbot/>}/>
 
             </AuthProvider>
         </>

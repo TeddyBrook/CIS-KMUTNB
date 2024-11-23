@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 /* CSS */
 import '../style/Register.css';
 
-import axios from 'axios';
-
 function Register() {
 
     const navigate = useNavigate();
@@ -17,75 +15,96 @@ function Register() {
         passwords: '',
         email: '',
         qualification: '',
-        role_Name: [],
+        positions: '',
     })
 
-    const handleChange = (e) => {
+    const [roles, setRoles] = useState([
+        { role_Name: 'Course Instructor', checked: false },
+        { role_Name: 'Subject Instructor', checked: false },
+        { role_Name: 'Admin', checked: false }
+    ]);
+
+    const [selectedRoles, setSelectedRoles] = useState([]);
+
+    const handleRoleChange = (e) => {
         const { checked, name } = e.target;
 
-        setInputs((prevInputs) => {
-            const updatedRoles = checked
-                ? [...prevInputs.role_Name, name]
-                : prevInputs.role_Name.filter((role) => role !== name);
+        if (checked) {
+            setSelectedRoles(prevSelectedRoles => [...prevSelectedRoles, name]);
+        } else {
+            setSelectedRoles(prevSelectedRoles => prevSelectedRoles.filter(role => role !== name));
+        }
 
-            return {
-                ...prevInputs,
-                role_Name: updatedRoles,
-            };
+        setRoles(prevRoles => {
+            return prevRoles.map(role => {
+                if (role.role_Name === name) {
+                    return { ...role, checked: checked };
+                }
+                return role;
+            });
         });
     };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setInputs({ ...inputs, [name]: value });
-    }
+        setInputs(prevInputs => ({
+            ...prevInputs,
+            [name]: value
+        }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
+            const roleIds = [];
 
-            /* 1. Create User */
-            const userResponse = await axios.post('http://localhost:8081/api/register', {
+            for (const roleName of selectedRoles) {
+                const response = await fetch('http://localhost:8081/api/role', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', },
+                    body: JSON.stringify({ role_Name: roleName }),
+                });
+
+                const data = await response.json();
+                roleIds.push(data.insertedRoleIds);
+            }
+
+            const userData = {
                 user_FirstName: inputs.user_FirstName,
                 user_LastName: inputs.user_LastName,
                 user_Name: inputs.user_Name,
                 passwords: inputs.passwords,
                 email: inputs.email,
                 qualification: inputs.qualification,
-                role_Name: inputs.role_Name,
+                positions: inputs.positions,
+                role_Id: roleIds,
+            };
+
+            const response = await fetch('http://localhost:8081/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', },
+                body: JSON.stringify(userData),
             });
 
-            /* 2. Pull user_Id จากการสร้างผู้ใช้ */
-            const user_Id = userResponse.data.user_Id;
-
-            /* 3. Create Role */
-            if (inputs.role_Name.length > 0) {
-                await axios.post('http://localhost:8081/api/role', {
-                    role_Name: inputs.role_Name,
-                    user_Id,
-                });
+            if (!response.ok) {
+                throw new Error('Failed to Register User');
             }
 
-            /* 4. Update role_Id ของผู้ใช้ */
-            await axios.put(`http://localhost:8081/api/update-user-role/${user_Id}`, {
-                role_Name: inputs.role_Name,
-            });
-
-            setInputs({
-                user_FirstName: '',
-                user_LastName: '',
-                user_Name: '',
-                passwords: '',
-                email: '',
-                qualification: '',
-                role_Name: [],
-            });
-            navigate('LoginUser');
-            console.log(userResponse.data);
+            console.log('Saving Data User Successful');
+            navigate('/LoginUser');
         } catch (error) {
-            console.error('Registration Failed !', error);
+            console.error('Registration failed', error.message);
         }
+    };
+
+    /* Function Resize Input */
+    const [description1, setDescription1] = useState('');
+
+    const handleResize = (event, setDescription) => {
+        setDescription(event.target.value);
+        event.target.style.height = 'auto';
+        event.target.style.height = event.target.scrollHeight + 'px';
     };
 
     const renderForm = (
@@ -104,6 +123,7 @@ function Register() {
                             value={inputs.user_FirstName || ""}
                             onChange={handleInputChange}
                             required
+                            autoComplete='given-name'
                         />
                     </div>
 
@@ -118,6 +138,7 @@ function Register() {
                             value={inputs.user_LastName || ""}
                             onChange={handleInputChange}
                             required
+                            autoComplete='family-name'
                         />
                     </div>
 
@@ -132,6 +153,7 @@ function Register() {
                             value={inputs.user_Name || ""}
                             onChange={handleInputChange}
                             required
+                            autoComplete="username"
                         />
                     </div>
 
@@ -146,6 +168,7 @@ function Register() {
                             value={inputs.passwords || ""}
                             onChange={handleInputChange}
                             required
+                            autoComplete="current-password"
                         />
                     </div>
 
@@ -160,62 +183,52 @@ function Register() {
                             value={inputs.email || ""}
                             onChange={handleInputChange}
                             required
+                            autoComplete="email"
                         />
                     </div>
 
                     <div className="input-container">
                         <label> Qualification </label>
-                        <input
-                            className="input-register"
+                        <textarea
+                            className="input-qualification"
                             name="qualification"
                             type="text"
-                            id="email"
                             placeholder="Qualification"
                             value={inputs.qualification || ""}
                             onChange={handleInputChange}
                             required
+                            autoComplete="organization-title"
+                            onInput={(event) => handleResize(event, setDescription1)}
+                        />
+                    </div>
+
+                    <div className="input-container">
+                        <label> Positions </label>
+                        <input
+                            className="input-register"
+                            name="positions"
+                            type="text"
+                            placeholder="ตำแหน่งวิชาการ"
+                            value={inputs.positions || ""}
+                            onChange={handleInputChange}
+                            required
+                            autoComplete="organization"
                         />
                     </div>
 
                     <div className="position-head">
-                        <div className="position-contain">
-                            <input
-                                className="position-form"
-                                name="Course Instructor"
-                                type="checkbox"
-                                id="pcourse"
-                                checked={inputs.role_Name.includes('Course Instructor')}
-                                value={inputs.role_Name || ""}
-                                onChange={handleChange}
-                            />
-                            <label className="position-name"> Course Instructor </label>
-                        </div>
-
-                        <div className="position-contain">
-                            <input
-                                className="position-form"
-                                name="Subject Instructor"
-                                type="checkbox"
-                                id="psubject"
-                                value={inputs.role_Name || ""}
-                                checked={inputs.role_Name.includes('Subject Instructor')}
-                                onChange={handleChange}
-                            />
-                            <label className="position-name"> Subject Instructor </label>
-                        </div>
-
-                        <div className="position-contain">
-                            <input
-                                className="position-form"
-                                name='Admin'
-                                type='checkbox'
-                                id='admin'
-                                value={inputs.role_Name || ""}
-                                checked={inputs.role_Name.includes('Admin')}
-                                onChange={handleChange}
-                            />
-                            <label className="position-name"> Admin </label>
-                        </div>
+                        {roles.map((role, index) => (
+                            <div className="position-contain" key={index}>
+                                <input
+                                    className="position-form"
+                                    name={`${role.role_Name}`}
+                                    type="checkbox"
+                                    checked={role.checked}
+                                    onChange={handleRoleChange}
+                                />
+                                <label className="position-name">{role.role_Name}</label>
+                            </div>
+                        ))}
                     </div>
 
                     <div className="button-container">
